@@ -4,6 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+<<<<<<< HEAD
+=======
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+>>>>>>> 8725177 (cambio)
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
@@ -26,6 +31,10 @@
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+<<<<<<< HEAD
+=======
+    "gh-pages": "^6.3.0",
+>>>>>>> 8725177 (cambio)
     "globals": "^17.5.0",
     "vite": "^8.0.10"
   }

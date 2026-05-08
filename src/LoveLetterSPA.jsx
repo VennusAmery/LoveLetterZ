@@ -6,6 +6,18 @@ import {
   ChevronLeft, ChevronRight, Volume2
 } from "lucide-react";
 
+<<<<<<< HEAD
+=======
+//fotos
+import fotoMeet from "./assets/fotos/1enero.jpg";
+import fotoKiss from "./assets/fotos/22febrero2026.jpg";
+import fotoYear1 from "./assets/fotos/aniversario.jpg";
+import fotoTrip from "./assets/fotos/1.jpg";
+import fotoRand from "./assets/fotos/2.jpg";
+import fotoToday from "./assets/fotos/3.jpg";
+
+
+>>>>>>> 8725177 (cambio)
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital@0;1&display=swap');`;
 
 // ─── PLAYLIST ─────────────────────────────────────────────────────────────────
@@ -25,7 +37,11 @@ const PLAYLIST = [
   { id: 3, title: "Mar",              
     artist: "Valeria Jasso",        
     file: "/audio/Mar.mp3",               
+<<<<<<< HEAD
     duration: "3:09s" 
+=======
+    duration: "3:09" 
+>>>>>>> 8725177 (cambio)
   },
   
   { id: 5, title: "K.",               
@@ -34,9 +50,15 @@ const PLAYLIST = [
     duration: "5:12" 
   },
   
+<<<<<<< HEAD
   { id: 4, title: "próximamente",     
     artist: "",                     
     file: "/audio/",  
+=======
+  { id: 4, title: "Si tú supieras",     
+    artist: "solamentedan",                     
+    file: "/audio/si tu supieras.mp3",  
+>>>>>>> 8725177 (cambio)
     duration: "" 
   },  
   
@@ -268,6 +290,10 @@ const ITEMS = [
   "La forma en que dices 'Abu'", "Tus manos cuando escribes",
   "El olor de tu shampoo de coco", "Cuando me corriges sin reírte", "Tu playlist de las 2am"
 ];
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8725177 (cambio)
 function Inventory() {
   const [checked, setChecked] = useState([0, 1, 3]);
   return (
@@ -293,19 +319,38 @@ function Inventory() {
 const SLOTS = [
   { title: "Cuando nos conocimos", key: "meet", icon: "🕊️" },
   { title: "Primer beso",          key: "kiss", icon: "💋" },
+<<<<<<< HEAD
   { title: "Primer año juntos",    key: "year1",icon: "🌹" },
+=======
+  { title: "Primer Cita",          key: "year1",icon: "🌹" },
+>>>>>>> 8725177 (cambio)
   { title: "Viaje juntos",         key: "trip", icon: "✈️" },
   { title: "Ese día random",       key: "rand", icon: "🌅" },
   { title: "Hoy",                  key: "today",icon: "✦"  },
 ];
 
 function MemoriesGallery() {
+<<<<<<< HEAD
   const [photos, setPhotos]       = useState({});
+=======
+>>>>>>> 8725177 (cambio)
   const [nasaPhotos, setNasaPh]   = useState({});
   const [loadingNasa, setLoadNasa]= useState({});
   const fileRefs = useRef({});
   const dateRefs = useRef({});
 
+<<<<<<< HEAD
+=======
+const [photos, setPhotos] = useState({
+    meet: fotoMeet,
+    kiss: fotoKiss,
+    year1: fotoYear1,
+    trip: fotoTrip,
+    rand: fotoRand,
+    today: fotoToday
+  });
+
+>>>>>>> 8725177 (cambio)
   const handleNasaDate = async (key, date) => {
     setLoadNasa(p => ({ ...p, [key]: true }));
     try {
@@ -348,10 +393,13 @@ function MemoriesGallery() {
               {loadingNasa[slot.key] && (
                 <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,.5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#c8a97e" }}>Cargando…</div>
               )}
+<<<<<<< HEAD
               <div style={{ position: "absolute", top: 4, right: 4, display: "flex", gap: 3 }}>
                 <button onClick={() => dateRefs.current[slot.key]?.click()} title="Foto NASA de esa fecha" style={S.overlayBtn}>🌌</button>
                 <button onClick={() => fileRefs.current[slot.key]?.click()} title="Subir foto" style={S.overlayBtn}><Camera size={9} /></button>
               </div>
+=======
+>>>>>>> 8725177 (cambio)
             </div>
             <div style={{ marginTop: 7 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#3d2f1f", fontFamily: "'Lora',serif" }}>{slot.title}</div>
@@ -359,9 +407,12 @@ function MemoriesGallery() {
           </motion.div>
         ))}
       </div>
+<<<<<<< HEAD
       <div style={{ marginTop: 8, fontSize: 9.5, color: "#a89880", textAlign: "center" }}>
         🌌 elige la fecha y aparece la foto NASA de ese día &nbsp;·&nbsp; 📷 sube tu propia foto
       </div>
+=======
+>>>>>>> 8725177 (cambio)
     </motion.div>
   );
 }
@@ -404,7 +455,11 @@ function CoordinatesMap() {
           <text x={100} y={62} textAnchor="middle" fill="#2d2620" fontSize={5} fontFamily="monospace">14.6487° N, 90.5128° W</text>
         </svg>
         <div style={{ marginTop: 10, padding: "10px 12px", background: "#1a1714", borderRadius: 8 }}>
+<<<<<<< HEAD
           <div style={{ fontSize: 12, color: "#c8a97e", fontFamily: "'Playfair Display',serif", fontStyle: "italic" }}>"Aquí comenzó todo."</div>
+=======
+          <div style={{ fontSize: 12, color: "#c8a97e", fontFamily: "'Playfair Display',serif", fontStyle: "italic" }}>" Donde te conocí ♡"</div>
+>>>>>>> 8725177 (cambio)
           <div style={{ fontSize: 9.5, color: "#4a3828", marginTop: 3 }}>Universidad Mariano Gálvez · Sede Central · Zona 2</div>
         </div>
       </div>
@@ -532,7 +587,11 @@ export default function LoveLetter() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Lora',serif", cursor: "none" }}>
+=======
+    <div style={{ minHeight: "100vh", background: "#f5f0e8", fontFamily: "'Lora',serif", cursor: "default" }}>
+>>>>>>> 8725177 (cambio)
       <style>{`
         ${FONTS}
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -541,14 +600,21 @@ export default function LoveLetter() {
         input[type=range] { cursor: pointer; }
       `}</style>
 
+<<<<<<< HEAD
       <motion.div animate={{ x: cursor.x - 8, y: cursor.y - 8 }} transition={{ type: "spring", stiffness: 600, damping: 40 }}
         style={{ position: "fixed", width: 16, height: 16, borderRadius: "50%", border: "1.5px solid #c8a97e", pointerEvents: "none", zIndex: 9999, mixBlendMode: "multiply" }} />
 
+=======
+>>>>>>> 8725177 (cambio)
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "32px 20px" }}>
        
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: 36 }}>
+<<<<<<< HEAD
           <div style={{ fontSize: 9, letterSpacing: 5, color: "#a89880", textTransform: "uppercase", marginBottom: 8 }}>Una carta digital</div>
+=======
+          <div style={{ fontSize: 9, letterSpacing: 5, color: "#a89880", textTransform: "uppercase", marginBottom: 8 }}>Una pequeña carta de amor ♡</div>
+>>>>>>> 8725177 (cambio)
           <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 36, fontWeight: 700, color: "#1a1714", lineHeight: 1.2 }}>
             Todo lo que guardo<br /><span style={{ fontStyle: "italic", fontWeight: 400, color: "#c8a97e" }}>de ti</span>
           </h1>
@@ -561,12 +627,20 @@ export default function LoveLetter() {
           <MusicPlayer />
         </div>
 
+<<<<<<< HEAD
         {/* 3-column layout */}
         <div style={{ display: "grid", gridTemplateColumns: "280px 1fr 280px", gap: 18, alignItems: "start" }}>
+=======
+        {/* Grid de 3 columnas */}
+        <div style={{ display: "grid", gridTemplateColumns: "280px 1fr 280px", gap: 18, alignItems: "start" }}>
+          
+          {/* COLUMNA IZQUIERDA */}
+>>>>>>> 8725177 (cambio)
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <MemoryClock startDate="2026-01-01" />
             <Inventory />
           </div>
+<<<<<<< HEAD
           <div><MemoriesGallery /></div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <CoordinatesMap />
@@ -574,6 +648,25 @@ export default function LoveLetter() {
           </div>
         </div>
 
+=======
+
+          {/* COLUMNA CENTRAL */}
+          <div>
+            <MemoriesGallery />
+          </div>
+
+          {/* COLUMNA DERECHA  */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <CoordinatesMap />
+          </div>
+        </div>
+
+        {/*El libro ocupando todo el ancho abajo */}
+        <div style={{ marginTop: 24, maxWidth: 800, margin: "24px auto 0" }}>
+          <MiniPoetry />
+        </div>
+
+>>>>>>> 8725177 (cambio)
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
           style={{ textAlign: "center", marginTop: 44, color: "#b0a090", fontSize: 11, letterSpacing: 3 }}>
           ✦ &nbsp; hecho con todo &nbsp; ✦
