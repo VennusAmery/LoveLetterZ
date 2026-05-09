@@ -552,10 +552,13 @@ function StarChart() {
 
 // ── LIBRARY ───────────────────────────────────────────────────────────────────
 const BOOK_POEMS = [
-  { title:"Sobre tu risa",  author:"P. Neruda (adaptado)", excerpt:"Tu risa me hace libre, me pone alas. Soledades me quita, cárcel me arranca.", color:"#4a3828" },
-  { title:"El Espacio",     author:"Anónimo",              excerpt:"No hay galaxia más lejana que el silencio entre nosotros, ni estrella más brillante que tu mirada.", color:"#1a1714" },
-  { title:"Branding",       author:"M. Benedetti",         excerpt:"Tu nombre es mi palabra favorita, la marca que mi corazón decidió registrar para siempre.", color:"#c8a97e" },
+  { title:"Quiero",         author:"M. Benedetti",                  excerpt:"Quiero estar contigo, en cada amanecer y atardecer, quiero recorrer el mundo, de la mano, juntos, sin perder.", color:"#4a3828" },
+  { title:"Tu Risa",        author:"Antonio Machado",               excerpt:"Tu risa me hace volar, me transporta a un mundo de ternura, donde todo es posible y nada puede lastimar, eres el sol que ilumina mi oscura travesura.", color:"#1a1714" },
+  { title:"Rima XXIII",     author:"Gustavo Adolfo Bécquer",        excerpt:"Por una mirada, un mundo; por una sonrisa, un cielo; por un beso… ¡Yo no sé qué te diera por un beso!", color:"#c8a97e" },
+  { title:"Branding",       author:"M. Benedetti",                  excerpt:"Tu nombre es mi palabra favorita, la marca que mi corazón decidió registrar para siempre.", color:"#9c2a1f" },
+  { title:"Quien alumbra",  author:"Alejandra Pizarnik",            excerpt:"Cuando me miras mis ojos son llaves, el muro tiene secretos, mi temor palabras, poemas. Sólo tú haces de mi memoria una viajera fascinada, un fuego incesante.", color:"#3b2e4d" }
 ];
+
 function LibrarySection() {
   const [selected, setSelected] = useState(null);
   return (
@@ -927,7 +930,7 @@ const [showModal, setShowModal] = useState(true);
               exit={{ scale: 0.8, y: 50 }}
               style={modalStyles.card}
             >
-              
+
               {/* Botón de cerrar */}
                 <button 
                   onClick={() => setShowModal(false)} 
