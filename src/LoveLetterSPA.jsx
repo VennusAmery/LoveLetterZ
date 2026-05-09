@@ -14,6 +14,13 @@ import fotoTrip from "./assets/fotos/1.jpg";
 import fotoRand from "./assets/fotos/2.jpg";
 import fotoToday from "./assets/fotos/3.jpg";
 
+import futeca from "./assets/fotos/futeca.jpeg";
+import parqueEcologico from "./assets/fotos/parque-ecologico.jpeg";
+import ruinas from "./assets/fotos/ruinas.jpeg";
+
+import flor1 from "./assets/fotos/flores1.jpeg";
+import flor2 from "./assets/fotos/flores2.jpeg";
+import flor3 from "./assets/fotos/flores3.jpeg";
 
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital@0;1&display=swap');`;
 
@@ -254,7 +261,7 @@ function MemoryClock({ startDate }) {
   }, [startDate]);
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={S.card}>
-      <Row icon={<Clock size={13} color="#a89880" />} label="Memory Clock" />
+      <Row icon={<Clock size={30} color="#a89880" />} label="¿El tiempo realmente avanza estando contigo?" />
       <div style={{ fontFamily: "'Playfair Display',serif", fontSize: 50, fontWeight: 700, color: "#1a1714", lineHeight: 1, marginTop: 10 }}>{el.total?.toLocaleString()}</div>
       <div style={{ fontSize: 9, color: "#a89880", letterSpacing: 2, marginTop: 2 }}>DÍAS TRANSCURRIDOS</div>
       <div style={{ display: "flex", gap: 18, marginTop: 14 }}>
@@ -347,12 +354,12 @@ function Inventory() {
 
 // ─── MEMORIES GALLERY ─────────────────────────────────────────────────────────
 const SLOTS = [
-  { title: "Cuando nos conocimos", key: "meet", icon: "🕊️" },
-  { title: "Primer beso",          key: "kiss", icon: "💋" },
-  { title: "Primer Cita",          key: "year1",icon: "🌹" },
-  { title: "Viaje juntos",         key: "trip", icon: "✈️" },
-  { title: "Ese día random",       key: "rand", icon: "🌅" },
-  { title: "Hoy",                  key: "today",icon: "✦"  },
+  { title: "Cuando nos conocimos",    key: "meet", icon: "🕊️", desc: "La foto que tomó la nasa cuando hablamos por primera vez" },
+  { title: "Primer beso",             key: "kiss", icon: "💋", desc: "La foto que tomó la nasa el dia de nuestro primer beso" },
+  { title: "Nuestras Citas",          key: "year1",icon: "🧑🏻‍❤️‍👩🏻", desc: "Recuerdos que guardo de cada cita", isCarousel: true },
+  { title: "Primeras flores",         key: "trip", icon: "🌹", desc: "Cada flor que florece en nuestro cariño", isCarousel: true },
+  { title: "Ese día random",          key: "rand", icon: "🌅", desc: "Simplemente siendo nosotros" },
+  { title: "Hoy",                     key: "today",icon: "✦",  desc: "Un día más a tu lado" },
 ];
 
 function MemoriesGallery() {
@@ -364,28 +371,18 @@ function MemoriesGallery() {
 const [photos, setPhotos] = useState({
     meet: fotoMeet,
     kiss: fotoKiss,
-    year1: fotoYear1,
-    trip: fotoTrip,
+    year1: [futeca, parqueEcologico, ruinas],
+    trip: [flor1, flor2, flor3],
     rand: fotoRand,
     today: fotoToday
   });
-
-  const handleNasaDate = async (key, date) => {
-    setLoadNasa(p => ({ ...p, [key]: true }));
-    try {
-      const res  = await fetch(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=${date}`);
-      const data = await res.json();
-      if (data.media_type === "image") setNasaPh(p => ({ ...p, [key]: { url: data.url, title: data.title, date: data.date } }));
-      else alert("NASA no tiene imagen para esa fecha, prueba otra.");
-    } catch { alert("Error al consultar NASA APOD."); }
-    setLoadNasa(p => ({ ...p, [key]: false }));
-  };
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
       <Row icon={<Camera size={13} color="#a89880" />} label="Our Constellation of Moments" />
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 14 }}>
         {SLOTS.map((slot, si) => (
+
           <motion.div key={slot.key}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + si * 0.06 }}
             whileHover={{ y: -3, boxShadow: "0 12px 32px rgba(0,0,0,0.09)" }}
@@ -395,10 +392,16 @@ const [photos, setPhotos] = useState({
             <input ref={el => dateRefs.current[slot.key] = el} type="date" style={{ display: "none" }}
               onChange={e => handleNasaDate(slot.key, e.target.value)} />
 
-            <div style={{ height: 110, borderRadius: 8, overflow: "hidden", position: "relative", background: "#f0e8de" }}>
-              {photos[slot.key] ? (
-                <img src={photos[slot.key]} alt={slot.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : nasaPhotos[slot.key] ? (
+              <div style={{ height: 110, borderRadius: 8, overflow: "hidden", position: "relative", background: "#f0e8de" }}>
+                {Array.isArray(photos[slot.key]) ? (
+
+                  // SI ES UN ARREGLO, RENDERIZA EL CARRUSEL
+                  <MiniCarousel images={photos[slot.key]} />
+                ) : photos[slot.key] ? (
+
+                  // SI ES UNA SOLA FOTO 
+                  <img src={photos[slot.key]} alt={slot.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                ) : nasaPhotos[slot.key] ? (
                 <>
                   <img src={nasaPhotos[slot.key].url} alt={nasaPhotos[slot.key].title} style={{ width: "100%", height: "100%", objectFit: "cover", filter: "brightness(.8)" }} />
                   <div style={{ position: "absolute", bottom: 3, left: 4, right: 4, fontSize: 7.5, color: "#fff", opacity: .7, fontStyle: "italic" }}>NASA · {nasaPhotos[slot.key].date}</div>
@@ -416,11 +419,56 @@ const [photos, setPhotos] = useState({
             <div style={{ marginTop: 7 }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: "#3d2f1f", fontFamily: "'Lora',serif" }}>{slot.title}</div>
             </div>
+
+          <div style={{ fontSize: 9, color: "#8a7d6a", marginTop: 2, lineHeight: "1.2" }}>
+              {slot.desc}
+            </div>
+
           </motion.div>
         ))}
       </div>
     </motion.div>
   );
+}
+
+// ─── MINI CARRUSEL ─────────────────────────────────────────────────────────
+function MiniCarousel({ images }) {
+  const [index, setIndex] = useState(0);
+
+  const next = (e) => {
+    e.stopPropagation(); 
+    setIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prev = (e) => {
+    e.stopPropagation();
+    setIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  return (
+    <div style={{ width: "100%", height: "100%", position: "relative" }}>
+      <img 
+        src={images[index]} 
+        style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+      />
+      
+      {/* Controles del Carrusel */}
+      <div style={{ position: "absolute", inset: 0, display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 5px" }}>
+        <button onClick={prev} style={S.carouselBtn}>‹</button>
+        <button onClick={next} style={S.carouselBtn}>›</button>
+      </div>
+
+      {/* Indicador de puntitos*/}
+      <div style={{ position: "absolute", bottom: 5, width: "100%", display: "flex", justifyContent: "center", gap: 3 }}>
+        {images.map((_, i) => (
+          <div key={i} style={{ 
+            width: 4, height: 4, borderRadius: "50%", 
+            background: i === index ? "#fff" : "rgba(255,255,255,0.5)" 
+          }} />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 // ─── MAP ──────────────────────────────────────────────────────────────────────
@@ -575,6 +623,21 @@ const S = {
   darkBtn:    { background: "none", border: "none", cursor: "pointer", color: "#6b5840", display: "flex", alignItems: "center" },
   overlayBtn: { background: "rgba(0,0,0,.5)", border: "none", borderRadius: 4, color: "#fff", cursor: "pointer", padding: "3px 5px", display: "flex", alignItems: "center" },
   pageBtn:    { display: "flex", alignItems: "center", gap: 4, background: "none", border: "1px solid #e0d4c0", borderRadius: 20, padding: "5px 10px", fontSize: 11, color: "#8a7560", cursor: "pointer", fontFamily: "'Lora',serif" },
+  carouselBtn: {
+    background: "rgba(255, 255, 255, 0.3)",
+    backdropFilter: "blur(4px)",
+    border: "none",
+    borderRadius: "50%",
+    width: 20,
+    height: 20,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#3d2f1f",
+    fontSize: 14,
+    fontWeight: "bold"
+ }
 };
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
