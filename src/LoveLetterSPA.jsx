@@ -1,32 +1,17 @@
 import {useEffect, useRef, useMemo } from "react";
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Play, Pause, SkipForward, SkipBack, Check,
-  ChevronLeft, ChevronRight, Volume2
-} from "lucide-react";
-
-import { 
-  X, 
-  Heart, 
-  Music, 
-  Music2, 
-  MapPin, 
-  Clock, 
-  BookOpen, 
-  Camera 
-} from 'lucide-react';
+import { Play, Pause, SkipForward, SkipBack, Check, ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
+import { X, Heart, Music, Music2, MapPin, Clock, BookOpen, Camera } from 'lucide-react';
 
 // ── fotos ──────────────────────────────────────────────────────────────────────
 import fotoMeet  from "./assets/fotos/1enero.jpg";
 import fotoKiss  from "./assets/fotos/22febrero2026.jpg";
 import fotoRand  from "./assets/fotos/2.jpg";
 import fotoToday from "./assets/fotos/3.jpg";
-
 import futeca         from "./assets/fotos/futeca.jpeg";
 import parqueEcologico from "./assets/fotos/parque-ecologico.jpeg";
 import ruinas         from "./assets/fotos/ruinas.jpeg";
-
 import flor1 from "./assets/fotos/flores1.jpeg";
 import flor2 from "./assets/fotos/flores2.jpeg";
 import flor3 from "./assets/fotos/flores3.jpeg";
@@ -408,7 +393,6 @@ function MarketingStats() {
   );
 }
 // ── STAR CHART ────────────────────────────────────────────────────────────────
-// Estrellas estáticas generadas una sola vez (useMemo evita el re-render)
 const STATIC_STARS = Array.from({ length: 160 }, (_, i) => ({
   id: i,
   cx: +(Math.random() * 100).toFixed(2),
@@ -419,7 +403,7 @@ const STATIC_STARS = Array.from({ length: 160 }, (_, i) => ({
   delay: (Math.random() * 5).toFixed(1),
 }));
  
-// Meteoros: cada uno con posición y tiempo de aparición distintos
+// Meteoros cada uno con posición y tiempo de aparición distintos
 const METEORS = [
   { top:"8%",  left:"4%",  rotate:34, delay:1.5,  repeatDelay:7  },
   { top:"14%", left:"52%", rotate:34, delay:5.5,  repeatDelay:9  },
@@ -455,6 +439,7 @@ function Meteor({ style }) {
 function StarNode({ x, y, label, date }) {
   return (
     <div style={{ position:"absolute", left:x, top:y, transform:"translate(-50%,-50%)", textAlign:"center", zIndex:3 }}>
+      
       {/* wrapper centrado — anillos se posicionan relativo al punto */}
       <div style={{ position:"relative", width:12, height:12, margin:"0 auto" }}>
         {/* anillo exterior */}
@@ -469,6 +454,7 @@ function StarNode({ x, y, label, date }) {
           animate={{ scale:[1, 2.2, 1], opacity:[0.35, 0, 0.35] }}
           transition={{ duration:2.6, repeat:Infinity, ease:"easeOut" }}
         />
+
         {/* anillo medio */}
         <motion.div style={{
           position:"absolute",
@@ -481,6 +467,7 @@ function StarNode({ x, y, label, date }) {
           animate={{ scale:[1, 1.7, 1], opacity:[0.55, 0.1, 0.55] }}
           transition={{ duration:2.6, repeat:Infinity, ease:"easeOut", delay:0.4 }}
         />
+
         {/* punto central */}
         <motion.div whileHover={{ scale:1.9 }}
           style={{
@@ -499,7 +486,6 @@ function StarNode({ x, y, label, date }) {
 }
  
 function StarChart() {
-  // useMemo para que las estrellas no se regeneren en cada render
   const stars = useMemo(() => STATIC_STARS, []);
  
   return (
@@ -513,6 +499,7 @@ function StarChart() {
         boxShadow:"0 10px 30px rgba(0,0,0,0.5)",
       }}
     >
+
       {/* Estrellas de fondo — SVG para mejor rendimiento */}
       <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:1 }}
         viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -600,16 +587,61 @@ function LibrarySection() {
 // ── POETRY BOOK ───────────────────────────────────────────────────────────────
 const PAGES = [
   { title:"I. El Lanzamiento",
-    body:`Estudias cómo atraer audiencias,\npero no sabes que conmigo\nno te hizo falta estrategia.\n\nFuiste marketing de guerrilla:\nun impacto directo,\nun encuentro inesperado,\nun cambio total en mi mercado interno.`
+    body:`Estudias para seducir multitudes,
+    \ncon estrategias de cristal
+    \ny conmigo no te hizo falta estrategia.
+
+    \n\nFue un impacto directo,
+    \nun encuentro inesperado,
+    \nun cambio total en mi mercado interno.`
   },
+
   { title:"II. Gravedad Zero",
-    body:`Dicen que el espacio es vacío,\npero yo lo siento lleno\ncuando hablas de las estrellas.\n\nQuería ser astronauta y terminó\nsiendo el universo mismo\ndonde mis días orbitan\nsin querer aterrizar.`
+    body:`Caíste en la parte más alta de mi pecho,
+    \ncon solo una mirada.
+    \npasaste de un “quizás” tímido
+    \na llenar todo mi deseo
+    \nen un solo parpadeo.
+
+    \n\nCuando dijiste mi nombre bajito,
+    \ndejé de ser mía,
+    \npara convertirme en tuya`
   },
-  { title:"III. Entre Páginas",
-    body:`Te veo leer y me pregunto\nsi algún autor habrá logrado\ndescribir la curva de tu espalda\ncuando te pierdes en una historia.\n\nSi fueras un libro, serías ese\nque subrayo con miedo a olvidar\nlo que sentí en el primer capítulo.`
+
+  { title:"III. ROI",
+    body:`Te regalé un “¿cómo amaneciste?”
+    \nsy recibí el sonido más tierno del mundo,
+    \ntu voz diciendo mi nombre.
+
+    \n\nContigo, el corazón no lleva cuentas,
+    \npero si las llevara,
+    \ncada segundo a tu lado
+    \ngenera intereses de pura ternura.`
   },
+
   { title:"IV. Posicionamiento",
-    body:`No es una campaña temporal.\nTe has quedado con el 'top of mind'\nde mis mañanas y mis noches.\n\nNo hay competencia posible\ncuando el producto es tu risa\ny el beneficio es mi paz.`
+    body:`Mi única estrategia es quererte
+    \ncon toda la paciencia y la dulzura posible,
+    \nen los días suaves y en los difíciles,
+    \nen silencio y en risas,
+    \nen las mañanas y en las noches.
+
+    \n\nMi mayor objetivo:
+    \nhacer que cada vez que abras los ojos,,
+    \nsientas en el pecho
+    \nque eres la persona más amada
+    \ndel universo entero.`
+  },
+
+  { title:"V. Viral",
+    body:`No hiciste nada especial.
+    \nSolo fuiste tú.
+
+    \nY eso bastó para que te volvieras
+    \nlo más bonito que circula dentro de mí,
+    \ncorriendo suave por mis venas,
+    \nrepetido en cada sueño,
+    \ncompartido con cada latido.`
   },
 ];
 
@@ -617,38 +649,40 @@ function MiniPoetry() {
   const [page, setPage] = useState(0);
   const [dir, setDir]   = useState(1);
   const go = (d) => { setDir(d); setPage(p => Math.max(0, Math.min(PAGES.length - 1, p + d))); };
+
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
-      style={{ ...S.card, background:"#fefcf8", border:"1px solid #e8e2d9", position:"relative", minHeight:320 }}>
+      style={{ ...S.card, background:"#fefcf8", border:"1px solid #e8e2d9", position:"relative", height: 480, }}>
       
       {/* notebook lines */}
-      {[...Array(15)].map((_, i) => (
+      {[...Array(22)].map((_, i) => (
         <div key={i} style={{ position:"absolute", left:0, right:0, top:44 + i * 19, height:1, background:"#ede7dd" }} />
       ))}
 
       {/* bookmark */}
       <div style={{ position:"absolute", right:20, top:0, width:15, height:40,
         background:"#c8a97e", clipPath:"polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%)" }} />
+
       {/* margin line */}
       <div style={{ position:"absolute", top:0, left:38, bottom:0, width:1.5, background:"rgba(240,160,100,.3)" }} />
-
       <div style={{ position:"relative", paddingLeft:14 }}>
         
-        <Row icon={<BookOpen size={13} color="#a89880" />} label="Versos escritos para ti..." />
-        <div style={{ position:"absolute", top:0, right:0, fontSize:9.5, color:"#c8a97e", letterSpacing:1 }}>{page + 1} / {PAGES.length}</div>
-        <div style={{ minHeight:240, marginTop:14, overflow:"hidden" }}>
+        <Row icon={<BookOpen size={10} color="#a89880"/>} label="Versos escritos para ti..." />
+        <div style={{ position:"absolute", left:600, top:0, right:0, fontSize:9.5, color:"#c8a97e", letterSpacing:1 }}>{page + 1} / {PAGES.length}</div>
+        <div style={{height: 370, marginTop:14, overflow:"hidden" }}>
+
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div key={page} custom={dir}
               initial={{ opacity:0, x:dir * 40 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:dir * -40 }}
               transition={{ duration:0.32, ease:"easeInOut" }}>
               <div style={{ fontSize:12, fontWeight:700, color:"#c8a97e", marginBottom:14, letterSpacing:2, fontFamily:"'Courier Prime',monospace" }}>{PAGES[page].title}</div>
-              <pre style={{ fontSize:12.5, color:"#3d2f1f", lineHeight:1.9, whiteSpace:"pre-wrap", fontFamily:"'Courier Prime',monospace", fontStyle:"italic", margin:0 }}>
+              <pre style={{ fontSize:12.5, color:"#3d2f1f", lineHeight:1.2, whiteSpace:"pre-wrap", fontFamily:"'Courier Prime',monospace", fontStyle:"italic", margin:0 }}>
                 {PAGES[page].body}
               </pre>
             </motion.div>
           </AnimatePresence>
-
         </div>
+
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:14 }}>
           <motion.button whileHover={{ scale:1.07 }} whileTap={{ scale:.94 }} onClick={() => go(-1)} disabled={page === 0}
             style={{ ...S.pageBtn, opacity: page === 0 ? .3 : 1 }}><ChevronLeft size={14} /> Anterior</motion.button>
@@ -662,101 +696,9 @@ function MiniPoetry() {
           <motion.button whileHover={{ scale:1.07 }} whileTap={{ scale:.94 }} onClick={() => go(1)} disabled={page === PAGES.length - 1}
             style={{ ...S.pageBtn, opacity: page === PAGES.length - 1 ? .3 : 1 }}>Siguiente <ChevronRight size={14} /></motion.button>
         </div>
+
       </div>
     </motion.div>
-  );
-}
-
-// ── SupportShield ───────────────────────────────────────────────────────────────────
-function SupportShield() {
-  const fears = [
-    { id: 1, fear: "Miedo al futuro", response: "Trazaremos el mapa juntos", icon: "🚀" },
-    { id: 2, fear: "Inseguridad", response: "Eres mi prioridad N° 1", icon: "💎" },
-    { id: 3, fear: "¿Te irás?", response: "Mi contrato es de por vida", icon: "🤝" },
-    { id: 4, fear: "No ser suficiente", response: "Eres más de lo que soñé", icon: "✨" },
-  ];
-
-  return (
-    <div style={{ 
-      background: "#fff", 
-      padding: "24px", 
-      borderRadius: "12px", 
-      border: "1px solid #eaddca",
-      marginTop: "18px",
-      boxShadow: "0 4px 15px rgba(212, 197, 176, 0.1)"
-    }}>
-      <h3 style={{ fontSize: "10px", letterSpacing: "2px", color: "#c8a97e", marginBottom: "20px", textTransform: "uppercase", textAlign: "center" }}>
-        Risk Mitigation Strategy
-      </h3>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-        {fears.map((item) => (
-          <motion.div 
-            key={item.id}
-            whileHover={{ x: 5 }}
-            style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "12px",
-              padding: "12px",
-              background: "#fdfcf0",
-              borderRadius: "8px",
-              border: "1px solid #eee"
-            }}
-          >
-            {/* El "Miedo" siendo bloqueado */}
-            <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontSize: "16px", opacity: 0.3, filter: "grayscale(1)" }}>{item.icon}</div>
-              <motion.div 
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                style={{ position: "absolute", color: "#e74c3c", fontSize: "20px", fontWeight: "bold" }}
-              >
-                ✕
-              </motion.div>
-            </div>
-
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: "10px", color: "#a89880", textDecoration: "line-through" }}>
-                {item.fear}
-              </div>
-              <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                style={{ fontSize: "13px", color: "#1a1714", fontWeight: "600", marginTop: "2px" }}
-              >
-                {item.response}
-              </motion.div>
-            </div>
-
-            {/* Shield Icon */}
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              style={{ color: "#c8a97e" }}
-            >
-              <Heart size={14} fill="#c8a97e" />
-            </motion.div>
-          </motion.div>
-        ))}
-      </div>
-
-      <div style={{ 
-        marginTop: "20px", 
-        padding: "10px", 
-        border: "1px dashed #c8a97e", 
-        borderRadius: "6px",
-        textAlign: "center"
-      }}>
-        <p style={{ fontSize: "9px", color: "#c8a97e", textTransform: "uppercase", fontWeight: "bold" }}>
-          Garantía de Acompañamiento
-        </p>
-        <p style={{ fontSize: "11px", color: "#8a7560", marginTop: "4px" }}>
-          "En todas las tormentas, yo soy tu puerto seguro. Lo prometo."
-        </p>
-      </div>
-    </div>
   );
 }
 
@@ -768,19 +710,20 @@ function PositioningMap() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       style={{ 
-        background: "radial-gradient(circle at 30% 20%, #1a1830, #070611 70%)",
+        fontFamily: "'Lora', serif",
+        background: "#100e0c",
         padding: "24px", 
         borderRadius: "12px", 
         border: "1px solid #1a1a2e",
         boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
         marginTop: "14px",
-        fontFamily: "'Inter', sans-serif",
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        color: "#fff" 
       }}
     >
 
-      {/* ✨ estrellas de fondo */}
+      {/* Estrellas de fondo */}
       {[...Array(40)].map((_, i) => (
         <div key={i}
           style={{
@@ -791,108 +734,87 @@ function PositioningMap() {
             borderRadius: "50%",
             top: `${Math.random() * 100}%`,
             left: `${Math.random() * 100}%`,
-            opacity: Math.random() * 0.8
+            opacity: Math.random() * 0.8,
+            pointerEvents: "none"
           }}
         />
       ))}
 
       {/* Encabezado */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", paddingBottom: "16px", marginBottom: "20px" }}>
-        <span style={{ fontSize: "10px", color: "#c8a97e", letterSpacing: "2px", textTransform: "uppercase" }}>
+      <div style={{ fontFamily: "'Lora', serif", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "16px", marginBottom: "20px" }}>
+        <span style={{ fontSize: "10px", color: "#c8a97e", letterSpacing: "2px", textTransform: "uppercase", fontWeight: "700" }}>
           Mapa de percepción
         </span>
-
-        <h2 style={{ fontSize: "18px", color: "#fff", marginTop: "4px", fontWeight: "600" }}>
+        <h2 style={{ fontFamily: "'Lora', serif",fontSize: "18px", color: "#fff", marginTop: "4px", fontWeight: "600", margin: 0 }}>
           Cómo orbitas en mi mundo
         </h2>
       </div>
       
       <div style={{ position: "relative", width: "100%", height: "240px" }}>
-        
-        {/* ejes como líneas espaciales */}
+
+        {/* Ejes */}
         <div style={{ position: "absolute", bottom: "0", left: "50%", width: "1px", height: "100%", background: "rgba(255,255,255,0.1)" }} />
         <div style={{ position: "absolute", top: "50%", left: "0", width: "100%", height: "1px", background: "rgba(255,255,255,0.1)" }} />
 
-        {/* etiquetas */}
-        <span style={{ position: "absolute", top: "8px", right: "8px", fontSize: "8px", color: "#c8a97e" }}>
+        {/* Etiquetas de cuadrante */}
+        <span style={{ fontFamily: "'Lora', serif", position: "absolute", top: "8px", right: "8px", fontSize: "8px", color: "#c8a97e", fontWeight: "600" }}>
           DONDE TODO TIENE SENTIDO
         </span>
-
-        <span style={{ position: "absolute", bottom: "8px", left: "8px", fontSize: "8px", color: "#6b7280" }}>
+        <span style={{ fontFamily: "'Lora', serif", position: "absolute", bottom: "8px", left: "8px", fontSize: "8px", color: "#6b7280", fontWeight: "600" }}>
           LO QUE SE SIENTE LEJANO
         </span>
 
-        {/* competencia  */}
+        {/* Competencia */}
         <div style={{ position: "absolute", left: "15%", bottom: "15%" }}>
-          {[...Array(8)].map((_, i) => (
-            <div key={i}
-              style={{
-                width: "3px",
-                height: "3px",
-                background: "#f9f9f9",
-                borderRadius: "50%",
-                margin: "2px",
-                display: "inline-block",
-                opacity: 0.5
-              }}
-            />
-          ))}
-          <div style={{ fontSize: "9px", color: "#6b7280", marginTop: "4px" }}>
+          <div style={{ display: "flex", gap: "3px", width: "40px", flexWrap: "wrap" }}>
+            {[...Array(8)].map((_, i) => (
+              <div key={i} style={{ width: "3px", height: "3px", background: "#f9f9f9", borderRadius: "50%", opacity: 0.5 }} />
+            ))}
+          </div>
+          <div style={{ fontFamily: "'Lora', serif",fontSize: "9px", color: "#6b7280", marginTop: "4px", fontWeight: "500" }}>
             todo lo demás
           </div>
         </div>
 
-        {/* estrella principal */}
+        {/* Estrella principal */}
         <motion.div 
-          animate={{ scale: [1, 1.2, 1] }}
+          animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 3, repeat: Infinity }}
-          style={{ position: "absolute", right: "12%", top: "20%", textAlign: "center" }}
+          style={{ position: "absolute", right: "12%", top: "20%", textAlign: "center", zIndex: 2 }}
         >
-          {/* glow */}
-          <div style={{
-            width: "16px",
-            height: "16px",
-            background: "#c8a97e",
-            borderRadius: "50%",
-            boxShadow: "0 0 20px #c8a97e, 0 0 40px rgba(200,169,126,0.6)",
-            margin: "0 auto"
+          <div style={{ 
+            width: "16px", height: "16px", background: "#c8a97e", borderRadius: "50%",
+            boxShadow: "0 0 20px #c8a97e, 0 0 40px rgba(200,169,126,0.4)", margin: "0 auto" 
           }} />
-
-          <div style={{ marginTop: "10px", color: "#fff", fontSize: "11px", fontWeight: "600" }}>
-            Tú
-          </div>
-
-          <div style={{ fontSize: "8px", color: "#c8a97e" }}>
-            mi punto de referencia
-          </div>
+          <div style={{ marginTop: "10px", color: "#fff", fontSize: "12px", fontWeight: "700" }}>Tú</div>
+          <div style={{ fontFamily: "'Lora', serif",fontSize: "8px", color: "#c8a97e", fontWeight: "600" }}>mi punto de referencia</div>
         </motion.div>
 
-        {/* eje labels */}
-        <div style={{ position: "absolute", bottom: "-25px", left: "0", right: "0", display: "flex", justifyContent: "space-between", fontSize: "8px", color: "#6b7280" }}>
-          <span>← conexión baja</span>
-          <span>conexión infinita →</span>
+        {/* Eje Labels */}
+        <div style={{fontFamily: "'Lora', serif", position: "absolute", bottom: "-25px", left: "0", right: "0", display: "flex", justifyContent: "space-between", fontSize: "8px", color: "#6b7280", fontWeight: "700" }}>
+          <span>← CONEXIÓN BAJA</span>
+          <span>CONEXIÓN INFINITA →</span>
         </div>
       </div>
 
       {/* KPIs */}
-      <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-        <div style={{ background: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "6px" }}>
-          <div style={{ fontSize: "8px", color: "#6b7280" }}>espacio que ocupas</div>
-          <div style={{ fontSize: "14px", fontWeight: "700", color: "#fff" }}>100%</div>
+      <div style={{ marginTop: "45px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+        <div style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+          <div style={{ fontSize: "8px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase" }}>espacio que ocupas</div>
+          <div style={{ fontSize: "16px", fontWeight: "700", color: "#fff" }}>100%</div>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.05)", padding: "10px", borderRadius: "6px" }}>
-          <div style={{ fontSize: "8px", color: "#6b7280" }}>probabilidad de irme</div>
-          <div style={{ fontSize: "14px", fontWeight: "700", color: "#c8a97e" }}>0%</div>
+        <div style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
+          <div style={{ fontSize: "8px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase" }}>probabilidad de irme</div>
+          <div style={{ fontSize: "16px", fontWeight: "700", color: "#c8a97e" }}>0%</div>
         </div>
       </div>
 
-      <p style={{ fontSize: "8px", color: "#6b7280", textAlign: "center", marginTop: "15px", fontStyle: "italic" }}>
+      <p style={{ fontSize: "8px", color: "#6b7280", textAlign: "center", marginTop: "20px", fontStyle: "italic" }}>
         *Análisis basado en 0% competencia detectada y 100% de exclusividad en el mercado.
       </p>
     </motion.div>
   );
 }
-
   
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function Row({ icon, label, dark }) {
@@ -1005,6 +927,7 @@ const [showModal, setShowModal] = useState(true);
               exit={{ scale: 0.8, y: 50 }}
               style={modalStyles.card}
             >
+              
               {/* Botón de cerrar */}
                 <button 
                   onClick={() => setShowModal(false)} 
