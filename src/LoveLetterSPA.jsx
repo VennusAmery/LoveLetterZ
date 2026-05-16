@@ -1,43 +1,140 @@
-import {useEffect, useRef, useMemo } from "react";
-import React, { useState } from 'react';
+import { useEffect, useRef, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, SkipForward, SkipBack, Check, ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
-import { X, Heart, Music, Music2, MapPin, Clock, BookOpen, Camera } from 'lucide-react';
+import { Music2, MapPin, Clock, BookOpen, Camera } from "lucide-react";
 
-// ── fotos ──────────────────────────────────────────────────────────────────────
-import fotoMeet  from "./assets/fotos/1enero.jpg";
-import fotoKiss  from "./assets/fotos/22febrero2026.jpg";
-import fotoRand  from "./assets/fotos/2.jpg";
-import fotoToday from "./assets/fotos/3.jpg";
-import futeca         from "./assets/fotos/futeca.jpeg";
+import fotoMeet        from "./assets/fotos/1enero.jpg";
+import fotoKiss        from "./assets/fotos/22febrero2026.jpg";
+import fotoRand        from "./assets/fotos/2.jpg";
+import fotoToday       from "./assets/fotos/3.jpg";
+import futeca          from "./assets/fotos/futeca.jpeg";
 import parqueEcologico from "./assets/fotos/parque-ecologico.jpeg";
-import ruinas         from "./assets/fotos/ruinas.jpeg";
-import flor1 from "./assets/fotos/flores1.jpeg";
-import flor2 from "./assets/fotos/flores2.jpeg";
-import flor3 from "./assets/fotos/flores3.jpeg";
+import ruinas          from "./assets/fotos/ruinas.jpeg";
+import flor1           from "./assets/fotos/flores1.jpeg";
+import flor2           from "./assets/fotos/flores2.jpeg";
+import flor3           from "./assets/fotos/flores3.jpeg";
 
-// ── fonts ──────────────────────────────────────────────────────────────────────
-const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital@0;1&display=swap');`;
+// ── CSS GLOBAL + RESPONSIVE ──────────────────────────────────────────────────
+const CSS = `
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Courier+Prime:ital@0;1&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #f5f0e8 !important; overflow-x: hidden; }
+button { font-family: inherit; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #c8a97e; border-radius: 2px; }
+input[type=range] { cursor: pointer; accent-color: #c8a97e; }
+
+/* página */
+.ll-page  { min-height: 100vh; background: #f5f0e8; font-family: 'Lora', serif; }
+.ll-inner { max-width: 1240px; margin: 0 auto; padding: 32px 20px; }
+
+/* hero */
+.hero-title { font-size: 36px; }
+.hero-sub   { font-size: 12px; }
+
+/* reproductor */
+.player-wrap {
+  border-radius: 16px; overflow: hidden;
+  background: #100e0c;
+  display: flex; flex-direction: row; height: 340px;
+}
+.player-list {
+  width: 220px; flex-shrink: 0;
+  border-right: 1px solid #1e1a16;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.player-ctrl {
+  flex: 1; display: flex; flex-direction: column;
+  justify-content: space-between; padding: 20px 22px;
+}
+
+/* grid principal 3 col */
+.grid-3col {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  gap: 18px; align-items: start;
+}
+.col-left, .col-right { display: flex; flex-direction: column; gap: 14px; }
+
+/* fotos */
+.memories-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-top: 14px;
+}
+
+/* poesía + libros */
+.grid-bottom {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 18px; align-items: stretch;
+}
+
+/* ═══════════════════ TABLET  768-1023 ═══════════════════ */
+@media (max-width: 1023px) {
+  .ll-inner { padding: 24px 16px; }
+
+  .player-wrap   { flex-direction: column; height: auto; }
+  .player-list   { width: 100%; border-right: none; border-bottom: 1px solid #1e1a16; max-height: 210px; }
+  .player-ctrl   { padding: 16px 18px; gap: 10px; }
+
+  .grid-3col { grid-template-columns: 1fr 1fr; }
+  /* la galería ocupa las 2 columnas arriba */
+  .col-center { grid-column: 1 / -1; order: -1; }
+
+  .grid-bottom { grid-template-columns: 1fr; }
+
+  .hero-title { font-size: 28px; }
+}
+
+/* ═══════════════════ MÓVIL  < 768 ═══════════════════ */
+@media (max-width: 767px) {
+  .ll-inner { padding: 18px 12px; }
+
+  .player-wrap { flex-direction: column; height: auto; }
+  .player-list { width: 100%; border-right: none; border-bottom: 1px solid #1e1a16; max-height: 190px; }
+  .player-ctrl { padding: 14px 14px; gap: 10px; }
+
+  .grid-3col   { grid-template-columns: 1fr; }
+  .col-center  { order: -1; }
+
+  .grid-bottom { grid-template-columns: 1fr; }
+
+  .hero-title { font-size: 22px; }
+  .hero-sub   { font-size: 11px; }
+
+  /* star nodes más pequeños */
+  .sn-label { font-size: 10px !important; width: 110px !important; margin-left: -49px !important; }
+  .sn-date  { font-size: 7.5px !important; margin-left: -49px !important; }
+}
+
+/* ═══════════════════ MUY PEQUEÑO < 400 ═══════════════════ */
+@media (max-width: 399px) {
+  .memories-grid { grid-template-columns: 1fr; }
+  .hero-title    { font-size: 20px; }
+}
+`;
 
 // ── PLAYLIST ──────────────────────────────────────────────────────────────────
 const PLAYLIST = [
-  { id:1, title:"Suenan como tú",  artist:"Mafalda Cardenal",      file:"/LoveLetterZ/audio/suenan-como-tu.mp3", duration:"3:34" },
-  { id:2, title:"Miel ♡",          artist:"Valeria Jasso",         file:"/LoveLetterZ/audio/Miel.mp3",           duration:"3:22" },
-  { id:3, title:"Mar",             artist:"Valeria Jasso",         file:"/LoveLetterZ/audio/Mar.mp3",            duration:"3:06" },
-  { id:4, title:"K.",              artist:"Cigarettes After Sex",  file:"/LoveLetterZ/audio/K.mp3",              duration:"4:29" },
-  { id:5, title:"Si tú supieras",  artist:"solamentedan",          file:"/LoveLetterZ/audio/Si-tu-supieras.mp3", duration:"3:27" },
-  { id:6, title:"Ojos Color Sol",  artist:"Maullek",               file:"/LoveLetterZ/audio/Ojos-Color-Sol.mp3", duration:"3:17" },
-  { id:7, title:"Te Quiero",       artist:"Marlete Volz",          file:"/LoveLetterZ/audio/te-quiero.mp3",      duration:"2:52" },
+  { id:1, title:"Suenan como tú",  artist:"Mafalda Cardenal",    file:"/LoveLetterZ/audio/suenan-como-tu.mp3", duration:"3:34" },
+  { id:2, title:"Miel ♡",          artist:"Valeria Jasso",        file:"/LoveLetterZ/audio/Miel.mp3",           duration:"3:22" },
+  { id:3, title:"Mar",             artist:"Valeria Jasso",        file:"/LoveLetterZ/audio/Mar.mp3",            duration:"3:06" },
+  { id:4, title:"K.",              artist:"Cigarettes After Sex", file:"/LoveLetterZ/audio/K.mp3",              duration:"4:29" },
+  { id:5, title:"Si tú supieras",  artist:"solamentedan",         file:"/LoveLetterZ/audio/Si-tu-supieras.mp3", duration:"3:27" },
+  { id:6, title:"Ojos Color Sol",  artist:"Maullek",              file:"/LoveLetterZ/audio/Ojos-Color-Sol.mp3", duration:"3:17" },
+  { id:7, title:"Te Quiero",       artist:"Marlete Volz",         file:"/LoveLetterZ/audio/te-quiero.mp3",      duration:"2:52" },
 ];
 
 // ── MUSIC PLAYER ──────────────────────────────────────────────────────────────
 function MusicPlayer() {
-  const [idx, setIdx]       = useState(0);
+  const [idx, setIdx]         = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [progress, setProg] = useState(0);
-  const [duration, setDur]  = useState(0);
-  const [volume, setVol]    = useState(0.8);
-  const [waving, setWaving] = useState(Array.from({ length: 20 }, () => Math.random()));
+  const [progress, setProg]   = useState(0);
+  const [duration, setDur]    = useState(0);
+  const [volume, setVol]      = useState(0.8);
+  const [waving, setWaving]   = useState(Array.from({ length: 20 }, () => Math.random()));
   const audioRef = useRef(null);
   const track = PLAYLIST[idx];
 
@@ -47,7 +144,7 @@ function MusicPlayer() {
     return () => clearInterval(t);
   }, [playing]);
 
-  const loadAndPlay = (i, autoPlay = false) => {
+  const load = (i, autoPlay = false) => {
     if (!audioRef.current) return;
     audioRef.current.pause();
     audioRef.current.src = PLAYLIST[i].file;
@@ -75,8 +172,8 @@ function MusicPlayer() {
     else { audioRef.current.play().catch(() => {}); setPlaying(true); }
   };
 
-  const next = () => { const n = (idx + 1) % PLAYLIST.length; setIdx(n); loadAndPlay(n, playing); };
-  const prev = () => { const n = (idx - 1 + PLAYLIST.length) % PLAYLIST.length; setIdx(n); loadAndPlay(n, playing); };
+  const next = () => { const n = (idx + 1) % PLAYLIST.length; setIdx(n); load(n, playing); };
+  const prev = () => { const n = (idx - 1 + PLAYLIST.length) % PLAYLIST.length; setIdx(n); load(n, playing); };
 
   const seek = (e) => {
     if (!audioRef.current || !duration) return;
@@ -86,7 +183,7 @@ function MusicPlayer() {
 
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
-      style={{ borderRadius:16, overflow:"hidden", background:"#100e0c", display:"flex", height:340 }}>
+      className="player-wrap">
 
       <audio ref={audioRef} src={track.file}
         onTimeUpdate={() => audioRef.current && setProg((audioRef.current.currentTime / audioRef.current.duration) * 100 || 0)}
@@ -94,8 +191,8 @@ function MusicPlayer() {
         onEnded={next} />
 
       {/* playlist */}
-      <div style={{ width:220, borderRight:"1px solid #1e1a16", display:"flex", flexDirection:"column", overflow:"hidden" }}>
-        <div style={{ padding:"14px 16px 10px", display:"flex", alignItems:"center", gap:7, borderBottom:"1px solid #1e1a16" }}>
+      <div className="player-list">
+        <div style={{ padding:"12px 16px 10px", display:"flex", alignItems:"center", gap:7, borderBottom:"1px solid #1e1a16" }}>
           <Music2 size={12} color="#c8a97e" />
           <span style={{ fontSize:9, letterSpacing:3, color:"#6b5840", textTransform:"uppercase" }}>Canciones con sonido a ti...</span>
         </div>
@@ -108,8 +205,7 @@ function MusicPlayer() {
                   background: active ? "#1e1a16" : "transparent",
                   borderLeft: active ? "2px solid #c8a97e" : "2px solid transparent", transition:"all .2s" }}>
                 <div style={{ width:18, textAlign:"center", flexShrink:0 }}>
-                  {active && playing
-                    ? <span style={{ fontSize:8, color:"#c8a97e" }}>▶</span>
+                  {active && playing ? <span style={{ fontSize:8, color:"#c8a97e" }}>▶</span>
                     : <span style={{ fontSize:10, color:"#3d2f1f" }}>{i + 1}</span>}
                 </div>
                 <div style={{ flex:1, minWidth:0 }}>
@@ -124,36 +220,29 @@ function MusicPlayer() {
         </div>
       </div>
 
-      {/* controls */}
-      <div style={{ flex:1, display:"flex", flexDirection:"column", justifyContent:"space-between", padding:"20px 22px" }}>
+      {/* controles */}
+      <div className="player-ctrl">
         <div>
-          <div style={{ fontSize:9, letterSpacing:3, color:"#4a3828", textTransform:"uppercase", marginBottom:10 }}>Reproduciendo</div>
+          <div style={{ fontSize:9, letterSpacing:3, color:"#4a3828", textTransform:"uppercase", marginBottom:8 }}>Reproduciendo</div>
           <div style={{ fontFamily:"'Playfair Display',serif", fontSize:19, color:"#f5f0e8", fontWeight:600, lineHeight:1.2 }}>{track.title}</div>
-          <div style={{ fontSize:12, color:"#6b5840", marginTop:4 }}>{track.artist}</div>
+          <div style={{ fontSize:12, color:"#6b5840", marginTop:3 }}>{track.artist}</div>
         </div>
-
-        {/* waveform */}
-        <div style={{ display:"flex", alignItems:"flex-end", gap:2, height:40, padding:"0 2px" }}>
+        <div style={{ display:"flex", alignItems:"flex-end", gap:2, height:36 }}>
           {waving.map((h, i) => (
-            <motion.div key={i}
-              animate={{ height: playing ? `${20 + h * 80}%` : "20%" }}
+            <motion.div key={i} animate={{ height: playing ? `${20 + h * 80}%` : "20%" }}
               transition={{ duration:0.4, ease:"easeInOut" }}
-              style={{ flex:1, background: i < Math.floor((progress / 100) * 20) ? "#c8a97e" : "#2a2420", borderRadius:2 }} />
+              style={{ flex:1, background: i < Math.floor((progress/100)*20) ? "#c8a97e" : "#2a2420", borderRadius:2 }} />
           ))}
         </div>
-
-        {/* progress */}
         <div>
-          <div onClick={seek} style={{ height:3, background:"#1e1a16", borderRadius:2, cursor:"pointer", overflow:"hidden", marginBottom:6 }}>
+          <div onClick={seek} style={{ height:3, background:"#1e1a16", borderRadius:2, cursor:"pointer", overflow:"hidden", marginBottom:5 }}>
             <div style={{ height:"100%", background:"linear-gradient(90deg,#c8a97e,#e8c89e)", width:`${progress}%`, borderRadius:2, transition:"width .5s linear" }} />
           </div>
           <div style={{ display:"flex", justifyContent:"space-between" }}>
-            <span style={{ fontSize:9, color:"#3d2f1f" }}>{fmtTime((progress / 100) * duration)}</span>
+            <span style={{ fontSize:9, color:"#3d2f1f" }}>{fmtTime((progress/100)*duration)}</span>
             <span style={{ fontSize:9, color:"#3d2f1f" }}>{fmtTime(duration)}</span>
           </div>
         </div>
-
-        {/* buttons */}
         <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:22 }}>
           <button onClick={prev} style={S.darkBtn}><SkipBack size={17} /></button>
           <motion.button whileTap={{ scale:0.9 }} onClick={togglePlay}
@@ -162,13 +251,11 @@ function MusicPlayer() {
           </motion.button>
           <button onClick={next} style={S.darkBtn}><SkipForward size={17} /></button>
         </div>
-
-        {/* volume */}
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <Volume2 size={11} color="#3d2f1f" />
           <input type="range" min={0} max={1} step={0.01} value={volume}
             onChange={e => { setVol(+e.target.value); if (audioRef.current) audioRef.current.volume = +e.target.value; }}
-            style={{ flex:1, accentColor:"#c8a97e" }} />
+            style={{ flex:1 }} />
         </div>
       </div>
     </motion.div>
@@ -181,14 +268,14 @@ function MemoryClock({ startDate }) {
   useEffect(() => {
     const calc = () => {
       const total = Math.floor((Date.now() - new Date(startDate)) / 86400000);
-      setEl({ years: Math.floor(total / 365), months: Math.floor((total % 365) / 30), days: total % 30, total });
+      setEl({ years: Math.floor(total/365), months: Math.floor((total%365)/30), days: total%30, total });
     };
     calc(); const t = setInterval(calc, 60000); return () => clearInterval(t);
   }, [startDate]);
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.1 }} style={S.card}>
-      <Row icon={<Clock size={30} color="#a89880" />} label="¿El tiempo realmente avanza estando contigo?" />
-      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:50, fontWeight:700, color:"#1a1714", lineHeight:1, marginTop:10 }}>{el.total?.toLocaleString()}</div>
+      <Row icon={<Clock size={24} color="#a89880" />} label="¿El tiempo realmente avanza estando contigo?" />
+      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:46, fontWeight:700, color:"#1a1714", lineHeight:1, marginTop:10 }}>{el.total?.toLocaleString()}</div>
       <div style={{ fontSize:9, color:"#a89880", letterSpacing:2, marginTop:2 }}>DÍAS TRANSCURRIDOS</div>
       <div style={{ display:"flex", gap:18, marginTop:14 }}>
         {[{ v:el.years, l:"años" }, { v:el.months, l:"meses" }, { v:el.days, l:"días" }].map(({ v, l }) => (
@@ -212,20 +299,19 @@ const ITEMS = [
   "El engagement que generas en mi corazón sin ni siquiera intentarlo.",
   "Esa dulzura que te hace un perfil único en un mercado tan genérico.",
 ];
-
 function Inventory() {
   const [checked, setChecked] = useState([0, 1, 3]);
   return (
-    <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }} style={{ ...S.card, textAlign:"left" }}>
+    <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.2 }} style={S.card}>
       <Row icon={<BookOpen size={13} color="#a89880" />} label="Inventario de tu esencia" />
       <div style={{ display:"flex", flexDirection:"column", gap:9, marginTop:12 }}>
         {ITEMS.map((item, i) => (
           <motion.div key={i} whileHover={{ x:3 }}
             onClick={() => setChecked(p => p.includes(i) ? p.filter(x => x !== i) : [...p, i])}
-            style={{ display:"flex", alignItems:"center", gap:9, cursor:"pointer" }}>
-            <div style={{ width:15, height:15, borderRadius:3, border:"1.5px solid #c8a97e",
+            style={{ display:"flex", alignItems:"flex-start", gap:9, cursor:"pointer" }}>
+            <div style={{ width:15, height:15, borderRadius:3, border:"1.5px solid #c8a97e", flexShrink:0, marginTop:2,
               background: checked.includes(i) ? "#c8a97e" : "transparent",
-              display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, transition:"all .2s" }}>
+              display:"flex", alignItems:"center", justifyContent:"center", transition:"all .2s" }}>
               {checked.includes(i) && <Check size={9} color="#fff" strokeWidth={3} />}
             </div>
             <span style={{ fontSize:12, color: checked.includes(i) ? "#8a7560" : "#3d2f1f",
@@ -269,14 +355,11 @@ function MemoriesGallery() {
   const [nasaPhotos, setNasaPh]    = useState({});
   const [loadingNasa, setLoadNasa] = useState({});
   const dateRefs = useRef({});
-
   const [photos] = useState({
-    meet:  fotoMeet,
-    kiss:  fotoKiss,
+    meet: fotoMeet, kiss: fotoKiss,
     year1: [futeca, parqueEcologico, ruinas],
     trip:  [flor1, flor2, flor3],
-    rand:  fotoRand,
-    today: fotoToday,
+    rand: fotoRand, today: fotoToday,
   });
 
   const handleNasaDate = async (key, date) => {
@@ -284,8 +367,8 @@ function MemoriesGallery() {
     try {
       const res  = await fetch(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=${date}`);
       const data = await res.json();
-      if (data.media_type === "image") setNasaPh(p => ({ ...p, [key]:{ url:data.url, title:data.title, date:data.date } }));
-      else alert("NASA no tiene imagen para esa fecha, intenta otra.");
+      if (data.media_type === "image") setNasaPh(p => ({ ...p, [key]:{ url:data.url, date:data.date } }));
+      else alert("NASA no tiene imagen para esa fecha.");
     } catch { alert("Error al consultar NASA APOD."); }
     setLoadNasa(p => ({ ...p, [key]:false }));
   };
@@ -293,7 +376,7 @@ function MemoriesGallery() {
   return (
     <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ delay:0.15 }}>
       <Row icon={<Camera size={13} color="#a89880" />} label="Our Constellation of Moments" />
-      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginTop:14 }}>
+      <div className="memories-grid">
         {SLOTS.map((slot, si) => (
           <motion.div key={slot.key}
             initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.15 + si * 0.06 }}
@@ -302,28 +385,26 @@ function MemoriesGallery() {
             <input ref={el => dateRefs.current[slot.key] = el} type="date" style={{ display:"none" }}
               onChange={e => handleNasaDate(slot.key, e.target.value)} />
             <div style={{ height:110, borderRadius:8, overflow:"hidden", position:"relative", background:"#f0e8de" }}>
-              {Array.isArray(photos[slot.key]) ? (
-                <MiniCarousel images={photos[slot.key]} />
-              ) : photos[slot.key] ? (
-                <img src={photos[slot.key]} alt={slot.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-              ) : nasaPhotos[slot.key] ? (
-                <>
-                  <img src={nasaPhotos[slot.key].url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", filter:"brightness(.8)" }} />
-                  <div style={{ position:"absolute", bottom:3, left:4, right:4, fontSize:7.5, color:"#fff", opacity:.7, fontStyle:"italic" }}>NASA · {nasaPhotos[slot.key].date}</div>
-                </>
-              ) : (
-                <div style={{ height:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:4 }}>
-                  <span style={{ fontSize:22 }}>{slot.icon}</span>
-                  <span style={{ fontSize:9, color:"#b0a090" }}>Sin foto aún</span>
-                </div>
-              )}
+              {Array.isArray(photos[slot.key]) ? <MiniCarousel images={photos[slot.key]} />
+                : photos[slot.key] ? <img src={photos[slot.key]} alt={slot.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                : nasaPhotos[slot.key] ? (
+                  <>
+                    <img src={nasaPhotos[slot.key].url} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", filter:"brightness(.8)" }} />
+                    <div style={{ position:"absolute", bottom:3, left:4, right:4, fontSize:7.5, color:"#fff", opacity:.7, fontStyle:"italic" }}>NASA · {nasaPhotos[slot.key].date}</div>
+                  </>
+                ) : (
+                  <div style={{ height:"100%", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:4 }}>
+                    <span style={{ fontSize:22 }}>{slot.icon}</span>
+                    <span style={{ fontSize:9, color:"#b0a090" }}>Sin foto aún</span>
+                  </div>
+                )}
               {loadingNasa[slot.key] && (
                 <div style={{ position:"absolute", inset:0, background:"rgba(0,0,0,.5)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:10, color:"#c8a97e" }}>Cargando…</div>
               )}
             </div>
             <div style={{ marginTop:7 }}>
               <div style={{ fontSize:11, fontWeight:600, color:"#3d2f1f", fontFamily:"'Lora',serif" }}>{slot.title}</div>
-              <div style={{ fontSize:9, color:"#8a7d6a", marginTop:2, lineHeight:"1.2" }}>{slot.desc}</div>
+              <div style={{ fontSize:9, color:"#8a7d6a", marginTop:2, lineHeight:1.3 }}>{slot.desc}</div>
             </div>
           </motion.div>
         ))}
@@ -347,9 +428,11 @@ function CoordinatesMap() {
           <path d="M 80 0 Q 95 50 100 85 Q 102 110 98 160" fill="none" stroke="#2a2420" strokeWidth={2}/>
           <path d="M 0 130 Q 50 125 100 120 Q 150 115 200 118" fill="none" stroke="#1e1a16" strokeWidth={1.5}/>
           <motion.circle cx={100} cy={85} r={18} fill="none" stroke="#c8a97e" strokeWidth={.5} opacity={.3}
-            animate={{ r:[18,28,18] }} transition={{ duration:2.5, repeat:Infinity }}/>
+            animate={{ scale:[1,1.55,1], opacity:[.3,0,.3] }} transition={{ duration:2.5, repeat:Infinity }}
+            style={{ originX:"100px", originY:"85px" }}/>
           <motion.circle cx={100} cy={85} r={10} fill="none" stroke="#c8a97e" strokeWidth={.8} opacity={.5}
-            animate={{ r:[10,18,10] }} transition={{ duration:2.5, repeat:Infinity, delay:.4 }}/>
+            animate={{ scale:[1,1.8,1], opacity:[.5,.1,.5] }} transition={{ duration:2.5, repeat:Infinity, delay:.4 }}
+            style={{ originX:"100px", originY:"85px" }}/>
           <circle cx={100} cy={85} r={5} fill="#c8a97e"/>
           <circle cx={100} cy={85} r={2} fill="#fff"/>
           <rect x={55} y={95} width={90} height={26} rx={4} fill="#1a1714"/>
@@ -374,7 +457,7 @@ function MarketingStats() {
     { label:"ROI (Felicidad x Minuto)",    value:"∞",     w:"100%" },
   ];
   return (
-    <motion.div style={{ ...S.card, background:"#100e0c", border:"none", color:"#f5f0e8", marginTop:14 }}>
+    <motion.div style={{ ...S.card, background:"#100e0c", border:"none", color:"#f5f0e8" }}>
       <Row icon={<Camera size={13} color="#c8a97e" />} label="Métricas de Impacto" dark />
       <div style={{ marginTop:15 }}>
         {stats.map((s, i) => (
@@ -392,154 +475,133 @@ function MarketingStats() {
     </motion.div>
   );
 }
+
+// ── POSITIONING MAP ───────────────────────────────────────────────────────────
+function PositioningMap() {
+  return (
+    <motion.div initial={{ opacity:0, y:10 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }}
+      style={{ fontFamily:"'Lora',serif", background:"#100e0c", padding:"24px", borderRadius:"12px",
+        border:"1px solid #1a1a2e", boxShadow:"0 10px 40px rgba(0,0,0,0.6)",
+        position:"relative", overflow:"hidden", color:"#fff" }}>
+      {[...Array(40)].map((_, i) => (
+        <div key={i} style={{ position:"absolute", width:"2px", height:"2px", background:"white", borderRadius:"50%",
+          top:`${Math.random()*100}%`, left:`${Math.random()*100}%`, opacity:Math.random()*0.8, pointerEvents:"none" }} />
+      ))}
+      <div style={{ borderBottom:"1px solid rgba(255,255,255,0.1)", paddingBottom:"16px", marginBottom:"20px" }}>
+        <span style={{ fontSize:"10px", color:"#c8a97e", letterSpacing:"2px", textTransform:"uppercase", fontWeight:"700" }}>Mapa de percepción</span>
+        <h2 style={{ fontSize:"18px", color:"#fff", marginTop:"4px", fontWeight:"600" }}>Cómo orbitas en mi mundo</h2>
+      </div>
+      <div style={{ position:"relative", width:"100%", height:"240px" }}>
+        <div style={{ position:"absolute", bottom:"0", left:"50%", width:"1px", height:"100%", background:"rgba(255,255,255,0.1)" }} />
+        <div style={{ position:"absolute", top:"50%", left:"0", width:"100%", height:"1px", background:"rgba(255,255,255,0.1)" }} />
+        <span style={{ position:"absolute", top:"8px", right:"8px", fontSize:"8px", color:"#c8a97e", fontWeight:"600" }}>DONDE TODO TIENE SENTIDO</span>
+        <span style={{ position:"absolute", bottom:"8px", left:"8px", fontSize:"8px", color:"#6b7280", fontWeight:"600" }}>LO QUE SE SIENTE LEJANO</span>
+        <div style={{ position:"absolute", left:"15%", bottom:"15%" }}>
+          <div style={{ display:"flex", gap:"3px", width:"40px", flexWrap:"wrap" }}>
+            {[...Array(8)].map((_, i) => <div key={i} style={{ width:"3px", height:"3px", background:"#f9f9f9", borderRadius:"50%", opacity:0.5 }} />)}
+          </div>
+          <div style={{ fontSize:"9px", color:"#6b7280", marginTop:"4px", fontWeight:"500" }}>todo lo demás</div>
+        </div>
+        <motion.div animate={{ scale:[1,1.1,1] }} transition={{ duration:3, repeat:Infinity }}
+          style={{ position:"absolute", right:"12%", top:"20%", textAlign:"center", zIndex:2 }}>
+          <div style={{ width:"16px", height:"16px", background:"#c8a97e", borderRadius:"50%",
+            boxShadow:"0 0 20px #c8a97e, 0 0 40px rgba(200,169,126,0.4)", margin:"0 auto" }} />
+          <div style={{ marginTop:"10px", color:"#fff", fontSize:"12px", fontWeight:"700" }}>Tú</div>
+          <div style={{ fontSize:"8px", color:"#c8a97e", fontWeight:"600" }}>mi punto de referencia</div>
+        </motion.div>
+        <div style={{ position:"absolute", bottom:"-25px", left:"0", right:"0", display:"flex", justifyContent:"space-between", fontSize:"8px", color:"#6b7280", fontWeight:"700" }}>
+          <span>← CONEXIÓN BAJA</span><span>CONEXIÓN INFINITA →</span>
+        </div>
+      </div>
+      <div style={{ marginTop:"45px", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px" }}>
+        {[["espacio que ocupas","100%","#fff"],["probabilidad de irme","0%","#c8a97e"]].map(([l,v,c]) => (
+          <div key={l} style={{ background:"rgba(255,255,255,0.05)", padding:"12px", borderRadius:"8px", border:"1px solid rgba(255,255,255,0.05)" }}>
+            <div style={{ fontSize:"8px", color:"#6b7280", fontWeight:"700", textTransform:"uppercase" }}>{l}</div>
+            <div style={{ fontSize:"16px", fontWeight:"700", color:c }}>{v}</div>
+          </div>
+        ))}
+      </div>
+      <p style={{ fontSize:"8px", color:"#6b7280", textAlign:"center", marginTop:"20px", fontStyle:"italic" }}>
+        *Análisis basado en 0% competencia detectada y 100% de exclusividad en el mercado.
+      </p>
+    </motion.div>
+  );
+}
+
 // ── STAR CHART ────────────────────────────────────────────────────────────────
 const STATIC_STARS = Array.from({ length: 160 }, (_, i) => ({
   id: i,
-  cx: +(Math.random() * 100).toFixed(2),
-  cy: +(Math.random() * 100).toFixed(2),
-  r:  +(Math.random() * 0.35 + 0.08).toFixed(2),
+  cx: +(Math.random()*100).toFixed(2),
+  cy: +(Math.random()*100).toFixed(2),
+  r:  +(Math.random()*0.35+0.08).toFixed(2),
   twinkle: Math.random() > 0.7,
-  dur: (1.8 + Math.random() * 3).toFixed(1),
-  delay: (Math.random() * 5).toFixed(1),
+  dur: (1.8+Math.random()*3).toFixed(1),
+  delay: (Math.random()*5).toFixed(1),
 }));
- 
-// Meteoros cada uno con posición y tiempo de aparición distintos
 const METEORS = [
-  { top:"8%",  left:"4%",  rotate:34, delay:1.5,  repeatDelay:7  },
-  { top:"14%", left:"52%", rotate:34, delay:5.5,  repeatDelay:9  },
-  { top:"6%",  left:"27%", rotate:34, delay:10.2, repeatDelay:13 },
-  { top:"20%", left:"70%", rotate:34, delay:3.8,  repeatDelay:11 },
+  { top:"8%", left:"4%", rotate:34, delay:1.5, repeatDelay:7 },
+  { top:"14%",left:"52%",rotate:34, delay:5.5, repeatDelay:9 },
+  { top:"6%", left:"27%",rotate:34, delay:10.2,repeatDelay:13},
+  { top:"20%",left:"70%",rotate:34, delay:3.8, repeatDelay:11},
 ];
- 
+
 function Meteor({ style }) {
   return (
-    <motion.div
-      style={{
-        position:"absolute", width:90, height:1.5,
-        background:"linear-gradient(90deg, transparent, rgba(255,255,255,0.9))",
-        borderRadius:2, pointerEvents:"none",
-        top: style.top, left: style.left,
-        rotate: style.rotate,
-        zIndex: 1,
-      }}
+    <motion.div style={{ position:"absolute", width:90, height:1.5,
+      background:"linear-gradient(90deg, transparent, rgba(255,255,255,0.9))",
+      borderRadius:2, pointerEvents:"none",
+      top:style.top, left:style.left, rotate:style.rotate, zIndex:1 }}
       initial={{ x:0, y:0, opacity:0 }}
-      animate={{ x:200, y:140, opacity:[0, 1, 1, 0] }}
-      transition={{
-        duration: 1.1,
-        repeat: Infinity,
-        repeatDelay: style.repeatDelay,
-        delay: style.delay,
-        ease: "easeIn",
-        times: [0, 0.1, 0.8, 1],
-      }}
+      animate={{ x:200, y:140, opacity:[0,1,1,0] }}
+      transition={{ duration:1.1, repeat:Infinity, repeatDelay:style.repeatDelay, delay:style.delay, ease:"easeIn", times:[0,0.1,0.8,1] }}
     />
   );
 }
- 
+
 function StarNode({ x, y, label, date }) {
   return (
     <div style={{ position:"absolute", left:x, top:y, transform:"translate(-50%,-50%)", textAlign:"center", zIndex:3 }}>
-      
-      {/* wrapper centrado — anillos se posicionan relativo al punto */}
       <div style={{ position:"relative", width:12, height:12, margin:"0 auto" }}>
-        {/* anillo exterior */}
-        <motion.div style={{
-          position:"absolute",
-          width:32, height:32, borderRadius:"50%",
-          border:"1px solid #c8a97e",
-          top:"50%", left:"50%",
-          marginTop:-16, marginLeft:-16,
-          pointerEvents:"none",
-        }}
-          animate={{ scale:[1, 2.2, 1], opacity:[0.35, 0, 0.35] }}
-          transition={{ duration:2.6, repeat:Infinity, ease:"easeOut" }}
-        />
-
-        {/* anillo medio */}
-        <motion.div style={{
-          position:"absolute",
-          width:18, height:18, borderRadius:"50%",
-          border:"1px solid #c8a97e",
-          top:"50%", left:"50%",
-          marginTop:-9, marginLeft:-9,
-          pointerEvents:"none",
-        }}
-          animate={{ scale:[1, 1.7, 1], opacity:[0.55, 0.1, 0.55] }}
-          transition={{ duration:2.6, repeat:Infinity, ease:"easeOut", delay:0.4 }}
-        />
-
-        {/* punto central */}
+        <motion.div style={{ position:"absolute", width:32, height:32, borderRadius:"50%", border:"1px solid #c8a97e",
+          top:"50%", left:"50%", marginTop:-16, marginLeft:-16, pointerEvents:"none" }}
+          animate={{ scale:[1,2.2,1], opacity:[0.35,0,0.35] }} transition={{ duration:2.6, repeat:Infinity, ease:"easeOut" }}/>
+        <motion.div style={{ position:"absolute", width:18, height:18, borderRadius:"50%", border:"1px solid #c8a97e",
+          top:"50%", left:"50%", marginTop:-9, marginLeft:-9, pointerEvents:"none" }}
+          animate={{ scale:[1,1.7,1], opacity:[0.55,0.1,0.55] }} transition={{ duration:2.6, repeat:Infinity, ease:"easeOut", delay:0.4 }}/>
         <motion.div whileHover={{ scale:1.9 }}
-          style={{
-            width:12, height:12, background:"#c8a97e", borderRadius:"50%",
-            cursor:"pointer", position:"relative", zIndex:1,
-            boxShadow:"0 0 10px #c8a97e, 0 0 22px rgba(200,169,126,.45)",
-          }}
-        />
+          style={{ width:12, height:12, background:"#c8a97e", borderRadius:"50%", cursor:"pointer", position:"relative", zIndex:1,
+            boxShadow:"0 0 10px #c8a97e, 0 0 22px rgba(200,169,126,.45)" }}/>
       </div>
-      <div style={{ fontSize:12, color:"#fff", marginTop:14, fontWeight:600, width:150, marginLeft:-69, fontFamily:"'Playfair Display',serif", textShadow:"0 1px 6px #000" }}>
-        {label}
-      </div>
-      <div style={{ fontSize:9, color:"#8a7560", letterSpacing:1, marginTop:4, marginLeft:-69 }}>{date}</div>
+      <div className="sn-label" style={{ fontSize:12, color:"#fff", marginTop:14, fontWeight:600, width:150, marginLeft:-69, fontFamily:"'Playfair Display',serif", textShadow:"0 1px 6px #000" }}>{label}</div>
+      <div className="sn-date" style={{ fontSize:9, color:"#8a7560", letterSpacing:1, marginTop:4, marginLeft:-69 }}>{date}</div>
     </div>
   );
 }
- 
+
 function StarChart() {
   const stars = useMemo(() => STATIC_STARS, []);
- 
   return (
-    <motion.div
-      initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
-      style={{
-        background:"radial-gradient(ellipse at 30% 40%, #12102a 0%, #060410 60%, #020108 100%)",
-        borderRadius:12, padding:"80px 40px",
-        position:"relative", overflow:"hidden",
-        border:"1px solid #1a1a2e",
-        boxShadow:"0 10px 30px rgba(0,0,0,0.5)",
-      }}
-    >
-
-      {/* Estrellas de fondo — SVG para mejor rendimiento */}
+    <motion.div initial={{ opacity:0 }} whileInView={{ opacity:1 }} viewport={{ once:true }}
+      style={{ background:"radial-gradient(ellipse at 30% 40%, #12102a 0%, #060410 60%, #020108 100%)",
+        borderRadius:12, padding:"60px 24px 80px", position:"relative", overflow:"hidden",
+        border:"1px solid #1a1a2e", boxShadow:"0 10px 30px rgba(0,0,0,0.5)" }}>
       <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", pointerEvents:"none", zIndex:1 }}
         viewBox="0 0 100 100" preserveAspectRatio="none">
         {stars.map(s => (
-          <circle key={s.id} cx={s.cx} cy={s.cy} r={s.r * 0.4} fill="white"
-            opacity={s.twinkle ? undefined : 0.55}>
-            {s.twinkle && (
-              <animate attributeName="opacity" values="0.9;0.15;0.9"
-                dur={`${s.dur}s`} begin={`${s.delay}s`} repeatCount="indefinite"/>
-            )}
+          <circle key={s.id} cx={s.cx} cy={s.cy} r={s.r*0.4} fill="white" opacity={s.twinkle ? undefined : 0.55}>
+            {s.twinkle && <animate attributeName="opacity" values="0.9;0.15;0.9" dur={`${s.dur}s`} begin={`${s.delay}s`} repeatCount="indefinite"/>}
           </circle>
         ))}
       </svg>
- 
-      {/* Meteoros */}
-      {METEORS.map((m, i) => <Meteor key={i} style={m} />)}
- 
+      {METEORS.map((m,i) => <Meteor key={i} style={m}/>)}
       <div style={{ textAlign:"center", position:"relative", zIndex:2 }}>
-        <div style={{ display:"flex", justifyContent:"center", alignItems:"center", gap:7, marginBottom:40 }}>
-          <span style={{ fontSize:10, letterSpacing:5, color:"#c8a97e", textTransform:"uppercase" }}>
-            Misión: Nuestra Línea del Tiempo
-          </span>
-        </div>
- 
-        <div style={{ height:260, position:"relative", width:"100%", margin:"0 auto" }}>
+        <span style={{ fontSize:10, letterSpacing:5, color:"#c8a97e", textTransform:"uppercase" }}>Misión: Nuestra Línea del Tiempo</span>
+        <div style={{ height:260, position:"relative", width:"100%", margin:"30px auto 0" }}>
           <svg style={{ position:"absolute", inset:0, width:"100%", height:"100%", overflow:"visible" }}>
-            <motion.path
-              d="M 50,200 C 200,80 600,220 950,60"
-              vectorEffect="non-scaling-stroke"
-              fill="none"
-              stroke="rgba(200,169,126,0.25)"
-              strokeWidth="1.5"
-              strokeDasharray="6,6"
-              initial={{ pathLength:0 }}
-              whileInView={{ pathLength:1 }}
-              viewport={{ once:true }}
-              transition={{ duration:2.5 }}
-            />
+            <motion.path d="M 50,200 C 200,80 600,220 950,60" vectorEffect="non-scaling-stroke"
+              fill="none" stroke="rgba(200,169,126,0.25)" strokeWidth="1.5" strokeDasharray="6,6"
+              initial={{ pathLength:0 }} whileInView={{ pathLength:1 }} viewport={{ once:true }} transition={{ duration:2.5 }}/>
           </svg>
- 
           <StarNode x="10%"  y="75%" label="Te vi por primera vez"  date="16/10/25 • El Big Bang"         />
           <StarNode x="35%"  y="30%" label="Primera conversación"   date="01/01/26 • Gravedad Cero"       />
           <StarNode x="65%"  y="70%" label="Primera cita"           date="22/02/26 • Órbita Estable"      />
@@ -552,24 +614,23 @@ function StarChart() {
 
 // ── LIBRARY ───────────────────────────────────────────────────────────────────
 const BOOK_POEMS = [
-  { title:"Quiero",         author:"M. Benedetti",                  excerpt:"Quiero estar contigo, en cada amanecer y atardecer, quiero recorrer el mundo, de la mano, juntos, sin perder.", color:"#4a3828" },
-  { title:"Tu Risa",        author:"Antonio Machado",               excerpt:"Tu risa me hace volar, me transporta a un mundo de ternura, donde todo es posible y nada puede lastimar, eres el sol que ilumina mi oscura travesura.", color:"#1a1714" },
-  { title:"Rima XXIII",     author:"Gustavo Adolfo Bécquer",        excerpt:"Por una mirada, un mundo; por una sonrisa, un cielo; por un beso… ¡Yo no sé qué te diera por un beso!", color:"#c8a97e" },
-  { title:"Branding",       author:"M. Benedetti",                  excerpt:"Tu nombre es mi palabra favorita, la marca que mi corazón decidió registrar para siempre.", color:"#9c2a1f" },
-  { title:"Quien alumbra",  author:"Alejandra Pizarnik",            excerpt:"Cuando me miras mis ojos son llaves, el muro tiene secretos, mi temor palabras, poemas. Sólo tú haces de mi memoria una viajera fascinada, un fuego incesante.", color:"#3b2e4d" }
+  { title:"Quiero",        author:"M. Benedetti",           excerpt:"Quiero estar contigo, en cada amanecer y atardecer, quiero recorrer el mundo, de la mano, juntos, sin perder.", color:"#4a3828" },
+  { title:"Tu Risa",       author:"Antonio Machado",        excerpt:"Tu risa me hace volar, me transporta a un mundo de ternura, donde todo es posible y nada puede lastimar.", color:"#1a1714" },
+  { title:"Rima XXIII",    author:"G.A. Bécquer",           excerpt:"Por una mirada, un mundo; por una sonrisa, un cielo; por un beso… ¡Yo no sé qué te diera por un beso!", color:"#c8a97e" },
+  { title:"Branding",      author:"M. Benedetti",           excerpt:"Tu nombre es mi palabra favorita, la marca que mi corazón decidió registrar para siempre.", color:"#9c2a1f" },
+  { title:"Quien alumbra", author:"Alejandra Pizarnik",     excerpt:"Cuando me miras mis ojos son llaves, el muro tiene secretos, mi temor palabras, poemas.", color:"#3b2e4d" },
 ];
-
 function LibrarySection() {
   const [selected, setSelected] = useState(null);
   return (
-    <motion.div style={{ ...S.card, marginTop:14 }}>
+    <motion.div style={S.card}>
       <Row icon={<BookOpen size={13} color="#a89880" />} label="Poemas que me recuerdan a ti" />
       <div style={{ display:"flex", gap:8, marginTop:15, overflowX:"auto", paddingBottom:10 }}>
         {BOOK_POEMS.map((book, i) => (
-          <motion.div key={i} whileHover={{ y:-5 }} onClick={() => setSelected(i)}
+          <motion.div key={i} whileHover={{ y:-5 }} onClick={() => setSelected(i === selected ? null : i)}
             style={{ minWidth:70, height:100, background:book.color, borderRadius:"2px 5px 5px 2px",
               borderLeft:"3px solid rgba(255,255,255,0.2)", cursor:"pointer", padding:8,
-              display:"flex", flexDirection:"column", justifyContent:"flex-end" }}>
+              display:"flex", flexDirection:"column", justifyContent:"flex-end", flexShrink:0 }}>
             <div style={{ fontSize:8, color:"#fff", fontWeight:"bold", fontFamily:"'Playfair Display',serif" }}>{book.title}</div>
           </motion.div>
         ))}
@@ -577,8 +638,8 @@ function LibrarySection() {
       <AnimatePresence mode="wait">
         {selected !== null && (
           <motion.div initial={{ opacity:0, height:0 }} animate={{ opacity:1, height:"auto" }} exit={{ opacity:0, height:0 }}
-            style={{ marginTop:10, padding:"10px", background:"#fdfbf8", borderRadius:8, border:"1px solid #e8e2d9" }}>
-            <div style={{ fontSize:11, fontStyle:"italic", color:"#3d2f1f", lineHeight:1.4 }}>"{BOOK_POEMS[selected].excerpt}"</div>
+            style={{ overflow:"hidden", marginTop:10, padding:"10px", background:"#fdfbf8", borderRadius:8, border:"1px solid #e8e2d9" }}>
+            <div style={{ fontSize:11, fontStyle:"italic", color:"#3d2f1f", lineHeight:1.5 }}>"{BOOK_POEMS[selected].excerpt}"</div>
             <div style={{ fontSize:8, color:"#a89880", marginTop:5, textAlign:"right" }}>— {BOOK_POEMS[selected].author}</div>
           </motion.div>
         )}
@@ -590,61 +651,19 @@ function LibrarySection() {
 // ── POETRY BOOK ───────────────────────────────────────────────────────────────
 const PAGES = [
   { title:"I. El Lanzamiento",
-    body:`Estudias para seducir multitudes,
-    \ncon estrategias de cristal
-    \ny conmigo no te hizo falta estrategia.
-
-    \n\nFue un impacto directo,
-    \nun encuentro inesperado,
-    \nun cambio total en mi mercado interno.`
+    body:`Estudias para seducir multitudes,\ncon estrategias de cristal\ny conmigo no te hizo falta estrategia.\n\nFue un impacto directo,\nun encuentro inesperado,\nun cambio total en mi mercado interno.`
   },
-
   { title:"II. Gravedad Zero",
-    body:`Caíste en la parte más alta de mi pecho,
-    \ncon solo una mirada.
-    \npasaste de un “quizás” tímido
-    \na llenar todo mi deseo
-    \nen un solo parpadeo.
-
-    \n\nCuando dijiste mi nombre bajito,
-    \ndejé de ser mía,
-    \npara convertirme en tuya`
+    body:`Caíste en la parte más alta de mi pecho,\ncon solo una mirada.\nPasaste de un "quizás" tímido\na llenar todo mi deseo\nen un solo parpadeo.\n\nCuando dijiste mi nombre bajito,\ndejé de ser mía,\npara convertirme en tuya.`
   },
-
   { title:"III. ROI",
-    body:`Te regalé un “¿cómo amaneciste?”
-    \nsy recibí el sonido más tierno del mundo,
-    \ntu voz diciendo mi nombre.
-
-    \n\nContigo, el corazón no lleva cuentas,
-    \npero si las llevara,
-    \ncada segundo a tu lado
-    \ngenera intereses de pura ternura.`
+    body:`Te regalé un "¿cómo amaneciste?"\ny recibí el sonido más tierno del mundo,\ntu voz diciendo mi nombre.\n\nContigo, el corazón no lleva cuentas,\npero si las llevara,\ncada segundo a tu lado\ngenera intereses de pura ternura.`
   },
-
   { title:"IV. Posicionamiento",
-    body:`Mi única estrategia es quererte
-    \ncon toda la paciencia y la dulzura posible,
-    \nen los días suaves y en los difíciles,
-    \nen silencio y en risas,
-    \nen las mañanas y en las noches.
-
-    \n\nMi mayor objetivo:
-    \nhacer que cada vez que abras los ojos,,
-    \nsientas en el pecho
-    \nque eres la persona más amada
-    \ndel universo entero.`
+    body:`Mi única estrategia es quererte\ncon toda la paciencia y la dulzura posible,\nen los días suaves y en los difíciles,\nen silencio y en risas.\n\nMi mayor objetivo:\nhacer que cada vez que abras los ojos,\nsientas en el pecho\nque eres la persona más amada\ndel universo entero.`
   },
-
   { title:"V. Viral",
-    body:`No hiciste nada especial.
-    \nSolo fuiste tú.
-
-    \nY eso bastó para que te volvieras
-    \nlo más bonito que circula dentro de mí,
-    \ncorriendo suave por mis venas,
-    \nrepetido en cada sueño,
-    \ncompartido con cada latido.`
+    body:`No hiciste nada especial.\nSolo fuiste tú.\n\nY eso bastó para que te volvieras\nlo más bonito que circula dentro de mí,\ncorriendo suave por mis venas,\nrepetido en cada sueño,\ncompartido con cada latido.`
   },
 ];
 
@@ -652,40 +671,30 @@ function MiniPoetry() {
   const [page, setPage] = useState(0);
   const [dir, setDir]   = useState(1);
   const go = (d) => { setDir(d); setPage(p => Math.max(0, Math.min(PAGES.length - 1, p + d))); };
-
   return (
     <motion.div initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }} transition={{ delay:0.3 }}
-      style={{ ...S.card, background:"#fefcf8", border:"1px solid #e8e2d9", position:"relative", height: 480, }}>
-      
-      {/* notebook lines */}
+      style={{ ...S.card, background:"#fefcf8", border:"1px solid #e8e2d9", position:"relative", minHeight:460 }}>
       {[...Array(22)].map((_, i) => (
         <div key={i} style={{ position:"absolute", left:0, right:0, top:44 + i * 19, height:1, background:"#ede7dd" }} />
       ))}
-
-      {/* bookmark */}
       <div style={{ position:"absolute", right:20, top:0, width:15, height:40,
         background:"#c8a97e", clipPath:"polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%)" }} />
-
-      {/* margin line */}
       <div style={{ position:"absolute", top:0, left:38, bottom:0, width:1.5, background:"rgba(240,160,100,.3)" }} />
       <div style={{ position:"relative", paddingLeft:14 }}>
-        
-        <Row icon={<BookOpen size={10} color="#a89880"/>} label="Versos escritos para ti..." />
-        <div style={{ position:"absolute", left:600, top:0, right:0, fontSize:9.5, color:"#c8a97e", letterSpacing:1 }}>{page + 1} / {PAGES.length}</div>
-        <div style={{height: 370, marginTop:14, overflow:"hidden" }}>
-
+        <Row icon={<BookOpen size={10} color="#a89880" />} label="Versos escritos para ti..." />
+        <div style={{ position:"absolute", top:0, right:0, fontSize:9.5, color:"#c8a97e", letterSpacing:1 }}>{page + 1} / {PAGES.length}</div>
+        <div style={{ minHeight:370, marginTop:14, overflow:"hidden" }}>
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div key={page} custom={dir}
               initial={{ opacity:0, x:dir * 40 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:dir * -40 }}
               transition={{ duration:0.32, ease:"easeInOut" }}>
               <div style={{ fontSize:12, fontWeight:700, color:"#c8a97e", marginBottom:14, letterSpacing:2, fontFamily:"'Courier Prime',monospace" }}>{PAGES[page].title}</div>
-              <pre style={{ fontSize:12.5, color:"#3d2f1f", lineHeight:1.2, whiteSpace:"pre-wrap", fontFamily:"'Courier Prime',monospace", fontStyle:"italic", margin:0 }}>
+              <pre style={{ fontSize:12.5, color:"#3d2f1f", lineHeight:1.9, whiteSpace:"pre-wrap", fontFamily:"'Courier Prime',monospace", fontStyle:"italic", margin:0 }}>
                 {PAGES[page].body}
               </pre>
             </motion.div>
           </AnimatePresence>
         </div>
-
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginTop:14 }}>
           <motion.button whileHover={{ scale:1.07 }} whileTap={{ scale:.94 }} onClick={() => go(-1)} disabled={page === 0}
             style={{ ...S.pageBtn, opacity: page === 0 ? .3 : 1 }}><ChevronLeft size={14} /> Anterior</motion.button>
@@ -699,126 +708,11 @@ function MiniPoetry() {
           <motion.button whileHover={{ scale:1.07 }} whileTap={{ scale:.94 }} onClick={() => go(1)} disabled={page === PAGES.length - 1}
             style={{ ...S.pageBtn, opacity: page === PAGES.length - 1 ? .3 : 1 }}>Siguiente <ChevronRight size={14} /></motion.button>
         </div>
-
       </div>
     </motion.div>
   );
 }
 
-// ── PositioningMap ───────────────────────────────────────────────────────────────────
-function PositioningMap() {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      style={{ 
-        fontFamily: "'Lora', serif",
-        background: "#100e0c",
-        padding: "24px", 
-        borderRadius: "12px", 
-        border: "1px solid #1a1a2e",
-        boxShadow: "0 10px 40px rgba(0,0,0,0.6)",
-        marginTop: "14px",
-        position: "relative",
-        overflow: "hidden",
-        color: "#fff" 
-      }}
-    >
-
-      {/* Estrellas de fondo */}
-      {[...Array(40)].map((_, i) => (
-        <div key={i}
-          style={{
-            position: "absolute",
-            width: "2px",
-            height: "2px",
-            background: "white",
-            borderRadius: "50%",
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: Math.random() * 0.8,
-            pointerEvents: "none"
-          }}
-        />
-      ))}
-
-      {/* Encabezado */}
-      <div style={{ fontFamily: "'Lora', serif", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "16px", marginBottom: "20px" }}>
-        <span style={{ fontSize: "10px", color: "#c8a97e", letterSpacing: "2px", textTransform: "uppercase", fontWeight: "700" }}>
-          Mapa de percepción
-        </span>
-        <h2 style={{ fontFamily: "'Lora', serif",fontSize: "18px", color: "#fff", marginTop: "4px", fontWeight: "600", margin: 0 }}>
-          Cómo orbitas en mi mundo
-        </h2>
-      </div>
-      
-      <div style={{ position: "relative", width: "100%", height: "240px" }}>
-
-        {/* Ejes */}
-        <div style={{ position: "absolute", bottom: "0", left: "50%", width: "1px", height: "100%", background: "rgba(255,255,255,0.1)" }} />
-        <div style={{ position: "absolute", top: "50%", left: "0", width: "100%", height: "1px", background: "rgba(255,255,255,0.1)" }} />
-
-        {/* Etiquetas de cuadrante */}
-        <span style={{ fontFamily: "'Lora', serif", position: "absolute", top: "8px", right: "8px", fontSize: "8px", color: "#c8a97e", fontWeight: "600" }}>
-          DONDE TODO TIENE SENTIDO
-        </span>
-        <span style={{ fontFamily: "'Lora', serif", position: "absolute", bottom: "8px", left: "8px", fontSize: "8px", color: "#6b7280", fontWeight: "600" }}>
-          LO QUE SE SIENTE LEJANO
-        </span>
-
-        {/* Competencia */}
-        <div style={{ position: "absolute", left: "15%", bottom: "15%" }}>
-          <div style={{ display: "flex", gap: "3px", width: "40px", flexWrap: "wrap" }}>
-            {[...Array(8)].map((_, i) => (
-              <div key={i} style={{ width: "3px", height: "3px", background: "#f9f9f9", borderRadius: "50%", opacity: 0.5 }} />
-            ))}
-          </div>
-          <div style={{ fontFamily: "'Lora', serif",fontSize: "9px", color: "#6b7280", marginTop: "4px", fontWeight: "500" }}>
-            todo lo demás
-          </div>
-        </div>
-
-        {/* Estrella principal */}
-        <motion.div 
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 3, repeat: Infinity }}
-          style={{ position: "absolute", right: "12%", top: "20%", textAlign: "center", zIndex: 2 }}
-        >
-          <div style={{ 
-            width: "16px", height: "16px", background: "#c8a97e", borderRadius: "50%",
-            boxShadow: "0 0 20px #c8a97e, 0 0 40px rgba(200,169,126,0.4)", margin: "0 auto" 
-          }} />
-          <div style={{ marginTop: "10px", color: "#fff", fontSize: "12px", fontWeight: "700" }}>Tú</div>
-          <div style={{ fontFamily: "'Lora', serif",fontSize: "8px", color: "#c8a97e", fontWeight: "600" }}>mi punto de referencia</div>
-        </motion.div>
-
-        {/* Eje Labels */}
-        <div style={{fontFamily: "'Lora', serif", position: "absolute", bottom: "-25px", left: "0", right: "0", display: "flex", justifyContent: "space-between", fontSize: "8px", color: "#6b7280", fontWeight: "700" }}>
-          <span>← CONEXIÓN BAJA</span>
-          <span>CONEXIÓN INFINITA →</span>
-        </div>
-      </div>
-
-      {/* KPIs */}
-      <div style={{ marginTop: "45px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
-        <div style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-          <div style={{ fontSize: "8px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase" }}>espacio que ocupas</div>
-          <div style={{ fontSize: "16px", fontWeight: "700", color: "#fff" }}>100%</div>
-        </div>
-        <div style={{ background: "rgba(255,255,255,0.05)", padding: "12px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.05)" }}>
-          <div style={{ fontSize: "8px", color: "#6b7280", fontWeight: "700", textTransform: "uppercase" }}>probabilidad de irme</div>
-          <div style={{ fontSize: "16px", fontWeight: "700", color: "#c8a97e" }}>0%</div>
-        </div>
-      </div>
-
-      <p style={{ fontSize: "8px", color: "#6b7280", textAlign: "center", marginTop: "20px", fontStyle: "italic" }}>
-        *Análisis basado en 0% competencia detectada y 100% de exclusividad en el mercado.
-      </p>
-    </motion.div>
-  );
-}
-  
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function Row({ icon, label, dark }) {
   return (
@@ -830,221 +724,120 @@ function Row({ icon, label, dark }) {
 }
 function fmtTime(s) {
   if (!s || isNaN(s)) return "0:00";
-  return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
 }
 
 const S = {
   card:        { borderRadius:12, padding:18, background:"#faf9f7", border:"1px solid #e8e2d9" },
   darkBtn:     { background:"none", border:"none", cursor:"pointer", color:"#6b5840", display:"flex", alignItems:"center" },
-  overlayBtn:  { background:"rgba(0,0,0,.5)", border:"none", borderRadius:4, color:"#fff", cursor:"pointer", padding:"3px 5px", display:"flex", alignItems:"center" },
   pageBtn:     { display:"flex", alignItems:"center", gap:4, background:"none", border:"1px solid #e0d4c0", borderRadius:20, padding:"5px 10px", fontSize:11, color:"#8a7560", cursor:"pointer", fontFamily:"'Lora',serif" },
   carouselBtn: { background:"rgba(255,255,255,0.3)", backdropFilter:"blur(4px)", border:"none", borderRadius:"50%", width:20, height:20, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:14, fontWeight:"bold" },
 };
 
-const modalStyles = {
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(5, 5, 10, 0.9)', 
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999, // Por encima de todo
-    backdropFilter: 'blur(8px)',
-  },
-  card: {
-    background: '#fdfcf0', 
-    padding: '40px',
-    borderRadius: '2px', 
-    maxWidth: '450px',
-    width: '90%',
-    position: 'relative',
-    boxShadow: '0 20px 50px rgba(0,0,0,0.5), inset 0 0 100px rgba(200, 169, 126, 0.1)',
-    border: '1px solid #d4c5b0',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: '15px',
-    right: '15px',
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#8a7560',
-  },
-  letterContent: {
-    textAlign: 'center',
-    fontFamily: "'Playfair Display', serif",
-  },
-  stamp: {
-    fontSize: '40px',
-    marginBottom: '20px',
-    opacity: 0.8,
-  },
-  title: {
-    color: '#2d2d2d',
-    fontSize: '22px',
-    marginBottom: '20px',
-  },
-  text: {
-    color: '#555',
-    lineHeight: '1.6',
-    fontSize: '15px',
-    marginBottom: '25px',
-  },
-  signature: {
-    fontSize: '15px',
-    color: '#555',
-    marginBottom: '30px',
-  },
-  startButton: {
-    background: '#1a1a2e',
-    color: '#c8a97e',
-    border: '1px solid #c8a97e',
-    padding: '10px 25px',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    letterSpacing: '2px',
-    textTransform: 'uppercase',
-  }
-};
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function WelcomeModal({ onClose }) {
+  return (
+    <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
+      style={{ position:"fixed", inset:0, backgroundColor:"rgba(5,5,10,0.9)", display:"flex",
+        alignItems:"center", justifyContent:"center", zIndex:9999, backdropFilter:"blur(8px)", padding:"16px" }}>
+      <motion.div initial={{ scale:0.8, y:50 }} animate={{ scale:1, y:0 }} exit={{ scale:0.8, y:50 }}
+        style={{ background:"#fdfcf0", padding:"40px", borderRadius:"2px", maxWidth:"450px", width:"100%",
+          position:"relative", boxShadow:"0 20px 50px rgba(0,0,0,0.5)", border:"1px solid #d4c5b0" }}>
+        <button onClick={onClose}
+          style={{ position:"absolute", top:"15px", right:"15px", background:"transparent", border:"none", cursor:"pointer", color:"#8a7560", fontSize:"20px", fontWeight:"bold" }}>×</button>
+        <div style={{ textAlign:"center", fontFamily:"'Playfair Display',serif" }}>
+          <div style={{ fontSize:"40px", marginBottom:"20px", opacity:0.8 }}>✉️</div>
+          <h2 style={{ color:"#2d2d2d", fontSize:"22px", marginBottom:"20px" }}>Holaaaa...</h2>
+          <p style={{ color:"#555", lineHeight:"1.6", fontSize:"15px", marginBottom:"25px" }}>
+            Antes que nada, si me dices que parece sacado de chat te pego y no te vuelvo hablar 😭,
+            JAJAJA pero quería de alguna forma darte algo diferente, para decirte lo mucho que te quiero...
+            esto es lo que salió, espero te guste y sepas que cada detalle lo hice pensando en ti.
+          </p>
+          <p style={{ fontSize:"15px", color:"#555", marginBottom:"30px" }}>¿No es demasiado, verdad?</p>
+          <button onClick={onClose}
+            style={{ background:"#1a1a2e", color:"#c8a97e", border:"1px solid #c8a97e", padding:"10px 25px",
+              borderRadius:"20px", cursor:"pointer", fontSize:"12px", letterSpacing:"2px", textTransform:"uppercase" }}>
+            Empezar
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 export default function LoveLetter() {
-const [showModal, setShowModal] = useState(true);
+  const [showModal, setShowModal] = useState(true);
 
-  return (<>
-  
-      {/* Modal*/}
+  return (
+    <>
+      <style>{CSS}</style>
+
       <AnimatePresence>
-        {showModal && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={modalStyles.overlay}
-          >
-            <motion.div 
-              initial={{ scale: 0.8, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 50 }}
-              style={modalStyles.card}
-            >
-
-              {/* Botón de cerrar */}
-                <button 
-                  onClick={() => setShowModal(false)} 
-                  style={modalStyles.closeButton}
-                >
-                  <span style={{ fontSize: '20px', fontWeight: 'bold' }}>×</span> 
-                </button>
-
-              {/* Contenido de la Carta */}
-              <div style={modalStyles.letterContent}>
-                <div style={modalStyles.stamp}>✉️</div>
-                <h2 style={modalStyles.title}>Holaaaa...</h2>
-                
-                <p style={modalStyles.text}>
-                  Antes que nada, si me dices que parece sacado de chat te pego y no te vuelvo hablar 😭,
-                  JAJAJA pero quería de alguna forma darte algo diferente, para decirte lo mucho que te quiero
-                  sé que no soy muy expresiva en palabras, así busco formas de dartelo entender sin decirlo directamente, 
-                  y pues... esto es lo que salió, espero te guste y sepas que cada detalle lo hice pensando en ti, intentado
-                  incluir cosas que sé que te gustan, te representan o cosas parte de tu escencia...
-                  No se de marketing ni del espacio, pero espero tenga sentido y sino, pido perdón 
-                </p>
-
-                <p style={modalStyles.signature}>¿No es demasiado, verdad?</p>
-                
-                <button 
-                  onClick={() => setShowModal(false)} 
-                  style={modalStyles.startButton}
-                >
-                  Empezar 
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        {showModal && <WelcomeModal onClose={() => setShowModal(false)} />}
       </AnimatePresence>
 
-      {/* Contenido Principal de la Página */}
-      <div style={{ minHeight:"100vh", background:"#f5f0e8", fontFamily:"'Lora',serif", cursor:"default" }}>
-        <style>{`
-          ${FONTS}
-          * { box-sizing:border-box; margin:0; padding:0; }
-          button { font-family:inherit; }
-          ::-webkit-scrollbar { width:3px; }
-          ::-webkit-scrollbar-thumb { background:#c8a97e; border-radius:2px; }
-          input[type=range] { cursor:pointer; }
-        `}</style>
-
-        <div style={{ maxWidth:1240, margin:"0 auto", padding:"32px 20px" }}>
+      <div className="ll-page">
+        <div className="ll-inner">
 
           {/* Header */}
-          <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} style={{ textAlign:"center", marginBottom:36 }}>
+          <motion.div initial={{ opacity:0, y:-12 }} animate={{ opacity:1, y:0 }} style={{ textAlign:"center", marginBottom:24 }}>
             <div style={{ fontSize:9, letterSpacing:5, color:"#a89880", textTransform:"uppercase", marginBottom:8 }}>Una pequeña carta de amor ♡</div>
-            <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:36, fontWeight:700, color:"#1a1714", lineHeight:1.2 }}>
+            <h1 className="hero-title" style={{ fontFamily:"'Playfair Display',serif", fontWeight:700, color:"#1a1714", lineHeight:1.2 }}>
               Todo lo que guardo<br /><span style={{ fontStyle:"italic", fontWeight:400, color:"#c8a97e" }}>de ti</span>
             </h1>
-
             <motion.div initial={{ scaleX:0 }} animate={{ scaleX:1 }} transition={{ delay:0.6 }}
               style={{ width:50, height:1.5, background:"#c8a97e", margin:"14px auto 0" }} />
-            </motion.div>
+          </motion.div>
 
-            <div style={{
-              marginTop: 12,
-              marginBottom: 24,
-              fontSize: 12,
-              color: "#8a7560",
-              fontStyle: "italic",
-              maxWidth: 420,
-              marginInline: "auto",
-              lineHeight: 1.6
-            }}>
-              No sé exactamente cómo funciona tu mundo, pero intenté y trataré de entenderlo.
-              Mezclé estrellas, números y recuerdos para explicarte algo que no sé decir directamente.
-            </div>
+          <div className="hero-sub" style={{ textAlign:"center", color:"#8a7560", fontStyle:"italic",
+            maxWidth:420, margin:"0 auto 24px", lineHeight:1.6 }}>
+            No sé exactamente cómo funciona tu mundo, pero intenté y trataré de entenderlo.
+            Mezclé estrellas, números y recuerdos para explicarte algo que no sé decir directamente.
+          </div>
 
-          {/* Music Player */}
+          {/* Reproductor */}
           <div style={{ marginBottom:18 }}>
             <MusicPlayer />
           </div>
 
-          {/* 3 columns */}
-          <div style={{ display:"grid", gridTemplateColumns:"280px 1fr 280px", gap:18, alignItems:"start" }}>
-            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+          {/* Grid 3 col */}
+          <div className="grid-3col">
+            <div className="col-left">
               <MemoryClock startDate="2026-01-01" />
               <Inventory />
             </div>
-
-            <div><MemoriesGallery /></div>
-            <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+            <div className="col-center">
+              <MemoriesGallery />
+            </div>
+            <div className="col-right">
               <CoordinatesMap />
-              <MarketingStats />              
+              <MarketingStats />
             </div>
           </div>
 
-          {/* Star Chart */}
-          <div style={{ marginTop:24, marginBottom:40 }}>
+          {/* Positioning Map */}
+          <div style={{ marginTop:24, marginBottom:24 }}>
             <PositioningMap />
           </div>
 
           {/* Star Chart */}
-          <div style={{ marginTop:24, marginBottom:40 }}>
+          <div style={{ marginBottom:40, overflow:"hidden" }}>
             <StarChart />
           </div>
 
           {/* Poetry + Library */}
-          <div style={{ display:"grid", gridTemplateColumns:"350px 1fr", gap:18, alignItems:"stretch" }}>
+          <div className="grid-bottom">
             <div><LibrarySection /></div>
-            <div style={{ flex: 1 }}><MiniPoetry /></div>
+            <div><MiniPoetry /></div>
           </div>
 
           {/* Footer */}
           <motion.div style={{ textAlign:"center", marginTop:44, color:"#b0a090", fontSize:11, letterSpacing:3 }}
-            animate={{ opacity:[0.4, 1, 0.4] }} transition={{ duration:3, repeat:Infinity }}>
-            ♡ &nbsp; Una forma distinta de decirte wue te quiero &nbsp; ♡
+            animate={{ opacity:[0.4,1,0.4] }} transition={{ duration:3, repeat:Infinity }}>
+            ♡ &nbsp; Una forma distinta de decirte que te quiero &nbsp; ♡
           </motion.div>
+
         </div>
       </div>
     </>
