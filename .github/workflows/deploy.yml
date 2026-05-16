@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages 🚀
+
+on:
+  push:
+    branches:
+      - main # rama
+
+permissions:
+  contents: write # Permite a la acción escribir en la rama de publicación
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código 
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar dependencias 
+        run: npm install
+
+      - name: Compilar proyecto para producción 
+        run: npm run build
+
+      - name: Desplegar en GitHub Pages 
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # Deja 'dist' si usas Vite. Cambia a 'build' si usas Create React App
+          branch: gh-pages # Rama destino automática para la web
